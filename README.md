@@ -1,4 +1,4 @@
-Semple-REFAL-optimizer
+Simple-REFAL-optimizer
 ======================
 
 Оптимизация компилтора простого РЕФАЛа. 
