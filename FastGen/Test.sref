@@ -1,0 +1,19 @@
+$EXTERN LoadFile, WriteLine, EraseBr, EraseWS, FastGen, Spar, Error, MakeIndex, HardGen;
+
+MakePatterns {
+	e.Pattern '=' e.Result ';' e.Tail = (<Spar <EraseWS e.Pattern>>) <MakePatterns e.Tail>;
+	 = ;
+	e.smth = <Error 'Bad scentence: ' e.smth>;
+}
+
+Test {
+	(e.Sent) e.Tail = <WriteLine 'Input sentence: ' e.Sent> 
+			<WriteLine 'Patterns: ' <MakePatterns e.Sent>> 
+			<WriteLine 'FastGen: '<MakeIndex <EraseBr <FastGen <HardGen <MakePatterns e.Sent>>>>('_')>> 
+			<Test e.Tail>;
+	 = ;
+}
+
+$ENTRY Go {
+	 = <Test <LoadFile 'Test.txt'>>;
+}

@@ -1,0 +1,36 @@
+$EXTERN WriteLine, Exit;
+
+$ENTRY Error {
+	e.Err = <WriteLine e.Err> <Exit 1>;
+}
+
+$ENTRY EraseBr {
+	( e.1 ) = e.1;
+	e.1 = e.1;
+}
+
+$FORWARD Spar1;
+
+$ENTRY Spar {
+	e.1 = <Spar1 ('L') e.1>;
+}
+
+Spar1 {
+	(e.S) '(' e.T = <Spar1 ((e.S)) e.T>;
+	((e.S) e.1) ')' e.T = <Spar1 (e.S (e.1)) e.T>;
+	('L' e.S) ')' e.T = <Error 'Error while parsing brackets'>;
+	(e.S) s.X e.T = <Spar1 (e.S s.X) e.T>;
+	('L' e.S) = e.S;
+	(e.S) = <Error 'Error while parsing brackets'>;
+}
+
+$ENTRY EraseWS {
+	e.1 ' ' e.2 =  <EraseWS e.1 e.2>;
+	e.1 = e.1;
+}
+
+$ENTRY MakeIndex {
+	e.smth1 ( e.smth2 ) e.smth3 ( e.index ) = <MakeIndex e.smth1 (e.index'l')> (<MakeIndex e.smth2 (e.index'c')>) <MakeIndex e.smth3 (e.index'r')>;
+	e.smth1 '.Index' e.smth2 ( e.index ) = e.smth1 '.Index'e.index'i' <MakeIndex e.smth2 (e.index'r')>;
+	e.smth (e.index) = e.smth;
+}
