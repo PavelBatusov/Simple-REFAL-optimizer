@@ -1,52 +1,101 @@
-$EXTERN EraseBr;
+$FORWARD FastGen-Terms, FastGen-MeN, FastGen-M, Check;
 
-$FORWARD FastGen1, FastGen2, FastGen3, Check;
+$LABEL Brackets, Atom, S, T, E;
+
+$EXTERN EraseBr;
 
 $ENTRY FastGen {
 	/* 0. Тело функции состоит из одного предложения */
 	(e.1) = (e.1);
 	
 	/* 1. Предложения являются термами; cтроим БО согласно таблице */
-	(t.1) (t.2) e.Tail = <FastGen <FastGen1 (t.1) (t.2)> e.Tail>;
+	((#Brackets e.body1)) ((#Brackets e.body2)) e.Tail = 
+		<FastGen 
+			(<FastGen-Terms 
+				((#Brackets e.body1)) ((#Brackets e.body2))
+			>)
+			e.Tail
+		>;
 	
 	/* 2. Предложения класса (M,N) */
-	(t.left1 e.1 'e.' e.2 t.right1) (t.left2 e.3 'e.' e.4 t.right2) e.Tail = 
-				<FastGen <FastGen2 (t.left1 e.1 'e.' e.2 t.right1) (t.left2 e.3 'e.' e.4 t.right2)> e.Tail>;
+	((#Brackets e.left1) e.1 (#E (e.name1) (e.pattern1)) e.2 (#Brackets e.right1))
+	((#Brackets e.left2) e.3 (#E (e.name2) (e.pattern2)) e.4 (#Brackets e.right2)) 
+	e.Tail = 
+		<FastGen 
+			(<FastGen-MeN
+				((#Brackets e.left1) e.1 (#E (e.name1) (e.pattern1)) e.2 
+				(#Brackets e.right1)) ((#Brackets e.left2) e.3 (#E (e.name2) 
+				(e.pattern2)) e.4 (#Brackets e.right2)) 
+			>) 
+			e.Tail
+		>;
 	
 	/* 3. Предложения класса (M) */
-	(t.left1 e.1) (t.left2 e.2) e.Tail = <FastGen <FastGen3 <Check (t.left1 e.1) (t.left2 e.2)> (t.left1 e.1) (t.left2 e.2)> e.Tail>;
+	((#Brackets e.left1) e.1) ((#Brackets e.left2) e.2) e.Tail = 
+		<FastGen 
+			(<FastGen-M 
+				<Check 
+					((#Brackets e.left1) e.1) ((#Brackets e.left2) e.2)
+				> 
+				((#Brackets e.left1) e.1) ((#Brackets e.left2) e.2)
+			>) 
+			e.Tail
+		>;
 	
 	/* 4. Все остальное */
-	 = (' e.Index ');
+	(e.1) (e.2) = (#E ('Index') ('e.Index->' e.1 ';e.Index->' e.2));
 }
 
-FastGen1 {
-	((t.1)) ((t.2)) = (<FastGen (t.1) (t.2)>);
+FastGen-Terms {
+	((#Brackets (#Brackets e.1))) ((#Brackets (#Brackets e.2))) = 
+		(#Brackets <EraseBr <FastGen ((#Brackets e.1)) ((#Brackets e.2))>>);
 	
-	(s.1) (s.1) = (' 's.1' ');
-	(s.1) (s.2) = (' s.Index ');
-	('s.'e.name1) (s.name2) = (' s.Index ');
-	(s.name1) ('s.'e.name2) = (' s.Index ');
+	(#Atom s.val) (#Atom s.val) = (#Atom s.val);
+	(#Atom s.v1) (#Atom s.v2) = (#S ('Index') ());
+	(#S (e.name) (e.pattern)) (#Atom s.val) = 
+		(#S (e.name) (e.pattern ';' e.name '->' s.val));
+	(#Atom s.val) (#S (e.name) (e.pattern)) = 
+		(#S (e.name) (e.pattern ';' e.name '->' s.val));
 	
-	(e.1) (e.2) = (' t.Index ');
+	(e.1) (e.2) = (#T ('Index') ('t.Index->' e.1 ';t.Index->' e.2));
 }
 
-FastGen2 {
-	(t.left1 e.1 'e.'e.name1 e.2 t.right1) (t.left2 e.3 'e.'e.name2 e.4 t.right2) = 
-		(<EraseBr <FastGen (t.left1) (t.left2)>> 
-			<EraseBr <FastGen2 (e.1 'e.'e.name1 e.2) (e.3 'e.'e.name2 e.4)>> 
-			<EraseBr <FastGen (t.right1) (t.right2)>>);
-	(e.1) (e.2) = (' e.Index ');
+FastGen-MeN {
+	((#Brackets e.left1) e.1 (#E (e.name1) (e.pattern1)) e.2 (#Brackets e.right1))
+	((#Brackets e.left2) e.3 (#E (e.name2) (e.pattern2)) e.4 (#Brackets e.right2)) 
+	= 
+			<FastGen 
+				(#Brackets e.left1) (#Brackets e.left2)
+			>
+		
+		<FastGen-MeN 
+			(e.1 (#E (e.name1) (e.pattern1)) e.2)
+			(e.3 (#E (e.name2) (e.pattern2)) e.4)
+		> 
+		 
+			<FastGen 
+				(#Brackets e.right1) (#Brackets e.right2)
+			>
+		;
+	(e.1) (e.2) = (#E ('Index') ('e.Index->' e.1 ';e.Index->' e.2));
 }
 
 Check {
-	(t.left1 e.1) (t.left2 e.2) = <Check (e.1) (e.2)>;
+	((#Brackets e.left1) e.1) ((#Brackets e.left2) e.2) = <Check (e.1) (e.2)>;
 	() () = 1;
 	e.1 = 0;
 }
 
-FastGen3 {
-	1 (t.left1 e.1) (t.left2 e.2) = (<EraseBr <FastGen (t.left1) (t.left2)>> <EraseBr <FastGen3 1 (e.1) (e.2)>>);
+FastGen-M {
+	1 ((#Brackets e.left1) e.1) ((#Brackets e.left2) e.2) = 
+		(<EraseBr 
+			<FastGen 
+				(e.left1) (e.left2)
+			>
+		> 
+		<EraseBr 
+			<FastGen-M 1 (e.1) (e.2)>
+		>);
 	1 () () = ;
-	0 e.1 = (' e.Index ');
+	0 e.1 = (#E ('Index') ('e.Index->' e.1));
 }

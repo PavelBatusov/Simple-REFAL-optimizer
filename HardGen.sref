@@ -1,20 +1,44 @@
 $EXTERN WriteLine;
 
+$LABEL S, T, E, Atom, Brackets;
+
 CreateHardSent {
 	/* предлажение имеет вид (P') */
-	( e.body ) ( e.tek_index ) = (<CreateHardSent e.body (e.tek_index)>);
-	/* s или t переменна */
-	's.'e.index ( e.tek_index ) = 's.Index'e.tek_index'i';
-	't.'e.index ( e.tek_index ) = 't.Index'e.tek_index'i';
-	s.index ( e.tek_index ) = s.index;
+	(#Brackets e.body) ( e.tek_index ) = 
+		(#Brackets <CreateHardSent e.body (e.tek_index)>);
+		
 	/* отщипнуть терм слева или справа */
-	t.left e.smth ( e.tek_index ) = <CreateHardSent t.left (e.tek_index'l')> <CreateHardSent e.smth (e.tek_index'r')>;
-	e.smth t.right ( e.tek_index ) = <CreateHardSent e.smth (e.tek_index'l')> <CreateHardSent t.right (e.tek_index'r')>;
+	(#Brackets e.body) e.smth ( e.tek_index ) = 
+		(#Brackets <CreateHardSent e.body (e.tek_index'l')>) 
+		<CreateHardSent e.smth (e.tek_index'r')>;
+		
+	e.smth (#Brackets e.body) ( e.tek_index ) = 
+		<CreateHardSent e.smth (e.tek_index'l')> 
+		(#Brackets <CreateHardSent e.body (e.tek_index'r')>);
+	
+	/* переменные */
+	(#S (e.name) (e.pattern)) e.smth ( e.tek_index ) = 
+		(#S ('Index' e.tek_index) ('s.Index' e.tek_index '->' 's.' e.name))
+		<CreateHardSent e.smth (e.tek_index'r')>;
+	
+	(#T (e.name) (e.pattern)) e.smth ( e.tek_index ) = 
+		(#T ('Index' e.tek_index) ('t.Index' e.tek_index '->' 't.' e.name))
+		<CreateHardSent e.smth (e.tek_index'r')>;
+	
+	(#E (e.name) (e.pattern)) e.smth ( e.tek_index ) = 
+		(#E ('Index' e.tek_index) ('e.Index' e.tek_index '->' 'e.' e.name))
+		<CreateHardSent e.smth (e.tek_index'r')>;
+	
+	/* атом */
+	(#Atom e.attr) e.smth ( e.tek_index ) = 
+		(#Atom e.attr)
+		<CreateHardSent e.smth (e.tek_index'r')>;
+	
+	/* пусто */
+	 ( e.tek_index ) = ;
 }
 
 $ENTRY HardGen {
-	(e.sent) e.tail = (<CreateHardSent e.sent ('_')>)
-				<WriteLine 'Hard sentence: '<CreateHardSent e.sent ('_')>> 
-				<HardGen e.tail>;
-	 = ;
+	(e.sent) e.tail = (<CreateHardSent e.sent ('_')>) <HardGen e.tail>;
+	= ;
 }

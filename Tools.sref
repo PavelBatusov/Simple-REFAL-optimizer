@@ -3,3 +3,8 @@ $EXTERN WriteLine, Exit;
 $ENTRY Error {
 	e.Err = <WriteLine e.Err> <Exit 1>;
 }
+
+$ENTRY EraseBr {
+	( e.1 ) = e.1;
+	e.1 = e.1;
+}

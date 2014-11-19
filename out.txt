@@ -1,0 +1,20 @@
+Input sentence: ((a)) = <Fun1>; ((a)) = <Fun2>; ((abacaba)) = <Fun3>;
+Patterns: ((Brackets (Brackets (Atom a))))((Brackets (Brackets (Atom a))))((Brackets (Brackets (Atom a)(Atom b)(Atom a)(Atom c)(Atom a)(Atom b)(Atom a))))
+HardGen: ((Brackets (Brackets (Atom a))))((Brackets (Brackets (Atom a))))((Brackets (Brackets (Atom a)(Atom b)(Atom a)(Atom c)(Atom a)(Atom b)(Atom a))))
+FastGen: ((T (Index)(t.Index->(Brackets (T (Index)(t.Index->(Brackets (Atom a));t.Index->(Brackets (Atom a)))));t.Index->(Brackets (Brackets (Atom a)(Atom b)(Atom a)(Atom c)(Atom a)(Atom b)(Atom a))))))
+Input sentence: ((a)) e.name1 ((a) (b)) = <Fun1>; ((b)) e.name1 (e.name2) = <Fun2>;
+Patterns: ((Brackets (Brackets (Atom a)))(E (name1)())(Brackets (Brackets (Atom a))(Brackets (Atom b))))((Brackets (Brackets (Atom b)))(E (name1)())(Brackets (E (name2)())))
+HardGen: ((Brackets (Brackets (Atom a)))(E (Index_rl)(e.Index_rl->e.name1))(Brackets (Brackets (Atom a))(Brackets (Atom b))))((Brackets (Brackets (Atom b)))(E (Index_rl)(e.Index_rl->e.name1))(Brackets (E (Index_rr)(e.Index_rr->e.name2))))
+FastGen: ((E (Index)(e.Index->Brackets (Brackets (Atom a));e.Index->Brackets (Brackets (Atom b))))(E (Index)(e.Index->(E (Index_rl)(e.Index_rl->e.name1));e.Index->(E (Index_rl)(e.Index_rl->e.name1))))(E (Index)(e.Index->Brackets (Brackets (Atom a))(Brackets (Atom b));e.Index->Brackets (E (Index_rr)(e.Index_rr->e.name2)))))
+Input sentence: (b) (b) (c) ((d)) = <Fun1>; (s.1) (s.1) (c) (t.1) = <Fun2>;
+Patterns: ((Brackets (Atom b))(Brackets (Atom b))(Brackets (Atom c))(Brackets (Brackets (Atom d))))((Brackets (S (1)()))(Brackets (S (1)()))(Brackets (Atom c))(Brackets (T (1)())))
+HardGen: ((Brackets (Atom b))(Brackets (Atom b))(Brackets (Atom c))(Brackets (Brackets (Atom d))))((Brackets (S (Index_l)(s.Index_l->s.1)))(Brackets (S (Index_rl)(s.Index_rl->s.1)))(Brackets (Atom c))(Brackets (T (Index_rrr)(t.Index_rrr->t.1))))
+FastGen: ((E (Index)(e.Index->(Atom b);e.Index->(S (Index_l)(s.Index_l->s.1)))E (Index)(e.Index->(Atom b);e.Index->(S (Index_rl)(s.Index_rl->s.1)))E (Index)(e.Index->(Atom c);e.Index->(Atom c))E (Index)(e.Index->(Brackets (Atom d));e.Index->(T (Index_rrr)(t.Index_rrr->t.1)))))
+Input sentence: a b e.X c d = ;
+Patterns: ((Atom a)(Atom b)(E (X)())(Atom c)(Atom d))
+HardGen: ((Atom a)(Atom b)(E (Index_rr)(e.Index_rr->e.X))(Atom c)(Atom d))
+FastGen: ((Atom a)(Atom b)(E (Index_rr)(e.Index_rr->e.X))(Atom c)(Atom d))
+Input sentence: A e.X B e.Y C = ;
+Patterns: ((Atom A)(E (X)())(Atom B)(E (Y)())(Atom C))
+HardGen: ((Atom A)(E (Index_r)(e.Index_r->e.X))(Atom B)(E (Index_rrr)(e.Index_rrr->e.Y))(Atom C))
+FastGen: ((Atom A)(E (Index_r)(e.Index_r->e.X))(Atom B)(E (Index_rrr)(e.Index_rrr->e.Y))(Atom C))
