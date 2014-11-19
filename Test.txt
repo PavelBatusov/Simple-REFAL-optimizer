@@ -3,3 +3,4 @@
 (b) (b) (c) ((d)) = <Fun1>; (s.1) (s.1) (c) (t.1) = <Fun2>;
 a b e.X c d = ;
 A e.X B e.Y C = ;
+A e.X (e.Y) = ;

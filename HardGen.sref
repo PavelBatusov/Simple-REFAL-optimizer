@@ -21,21 +21,33 @@ CreateHardSent {
 		(#S ('Index' e.tek_index) ('s.Index' e.tek_index '->' 's.' e.name))
 		<CreateHardSent e.smth (e.tek_index'r')>;
 	
+	e.smth (#S (e.name) (e.pattern)) ( e.tek_index ) = 
+		<CreateHardSent e.smth (e.tek_index'l')>
+		(#S ('Index' e.tek_index) ('s.Index' e.tek_index '->' 's.' e.name));
+	
 	(#T (e.name) (e.pattern)) e.smth ( e.tek_index ) = 
 		(#T ('Index' e.tek_index) ('t.Index' e.tek_index '->' 't.' e.name))
 		<CreateHardSent e.smth (e.tek_index'r')>;
 	
-	(#E (e.name) (e.pattern)) e.smth ( e.tek_index ) = 
-		(#E ('Index' e.tek_index) ('e.Index' e.tek_index '->' 'e.' e.name))
-		<CreateHardSent e.smth (e.tek_index'r')>;
+	e.smth (#T (e.name) (e.pattern)) ( e.tek_index ) = 
+		<CreateHardSent e.smth (e.tek_index'l')>
+		(#T ('Index' e.tek_index) ('t.Index' e.tek_index '->' 't.' e.name));
 	
 	/* атом */
 	(#Atom e.attr) e.smth ( e.tek_index ) = 
 		(#Atom e.attr)
 		<CreateHardSent e.smth (e.tek_index'r')>;
 	
+	e.smth (#Atom e.attr) ( e.tek_index ) = 
+		<CreateHardSent e.smth (e.tek_index'l')>
+		(#Atom e.attr);
+		
 	/* пусто */
 	 ( e.tek_index ) = ;
+	 
+	/* все остальное */
+	e.smth ( e.tek_index ) = 
+		(#E ('Index' e.tek_index) ('e.Index'e.tek_index'->'e.smth));
 }
 
 $ENTRY HardGen {
