@@ -11,11 +11,7 @@ $ENTRY FastGen {
 	(e.1) = (e.1);
 	
 	/* 1. Предложения являются термами; cтроим БО согласно таблице */
-	((#Brackets e.body1)) ((#Brackets e.body2)) e.Tail = 
-		<FastGen 
-			(<FastGen-Terms ((#Brackets e.body1)) ((#Brackets e.body2))>)
-			e.Tail
-		>;
+	(t.1) (t.2) e.Tail = <FastGen (<FastGen-Terms (t.1) (t.2)>) e.Tail>;
 	
 	/* 2. Предложения класса (M,N) */
 	((#Brackets e.left1) e.1 (#E (e.name1) (e.pattern1)) e.2 (#Brackets e.right1))
@@ -47,22 +43,41 @@ $ENTRY FastGen {
 }
 
 FastGen-Terms {
-	((#Brackets (#Atom s.val))) ((#Brackets (#Atom s.val))) = 
-		(#Brackets (#Atom s.val));
+	/* и там и там скобки, разбираем содержимое */
+	((#Brackets e.1)) ((#Brackets e.2)) =
+		(#Brackets <EraseBr <FastGen (e.1) (e.2)>>);
 	
-	((#Brackets (#Atom s.v1))) ((#Brackets (#Atom s.v2))) = 
-		(#Brackets (#S ('Index') (#Alt ((#Atom s.v1)) ((#Atom s.v2)))));
+	/* с #E переменной - все #E переменная */
+	((#E (e.name) (e.pattern))) ((s.type e.body)) =
+		(#E ('Index') (#Alt ((#E (e.name) (e.pattern))) ((s.type e.body))));
+		
+	((s.type e.body)) ((#E (e.name) (e.pattern))) =
+		(#E ('Index') (#Alt ((s.type e.body))) ((#E (e.name) (e.pattern))));
 	
-	((#Brackets (#S (e.name) (e.pat)))) ((#Brackets (#Atom s.val))) = 
-		(#Brackets (#S ('Index') (e.pat ((#Atom s.val)))));
+	/* с #T переменной - все #T переменная */
+	((#T (e.name) (e.pattern))) ((s.type e.body)) =
+		(#T ('Index') (#Alt ((#T (e.name) (e.pattern))) ((s.type e.body))));
 	
-	((#Brackets (#Atom s.val))) ((#Brackets (#S (e.name) (e.pat)))) = 
-		(#Brackets (#S ('Index') (e.pat ((#Atom s.val)))));
+	((s.type e.body)) ((#T (e.name) (e.pattern))) =
+		(#T ('Index') (#Alt ((s.type e.body))) ((#T (e.name) (e.pattern))));
 	
-	((#Brackets (#Brackets e.1))) ((#Brackets (#Brackets e.2))) =
-		(#Brackets <FastGen-Terms ((#Brackets e.1)) ((#Brackets e.2))>);
+	/* #S переменная */
+	((#S (e.name) (e.pattern))) ((#Brackets e.body)) =
+		(#T ('Index') (#Alt ((#S (e.name) (e.pattern))) ((#Brackets e.body))));
 	
-	(e.1) (e.2) = (#T ('Index') (#Alt (e.1) (e.2)));
+	((#Brackets e.body)) ((#S (e.name) (e.pattern))) =
+		(#T ('Index') (#Alt ((#Brackets e.body)) ((#S (e.name) (e.pattern)))));
+	
+	((#S (e.name) (e.pattern))) ((s.type e.body)) =
+		(#S ('Index') (#Alt ((#S (e.name) (e.pattern))) ((s.type e.body))));
+	
+	((s.type e.body)) ((#S (e.name) (e.pattern))) =
+		(#S ('Index') (#Alt ((s.type e.body))) ((#S (e.name) (e.pattern))));
+	
+	/* Атом */
+	((#Atom s.val)) ((#Atom s.val)) = (#Atom s.val);
+	((#Atom s.val1)) ((#Atom s.val2)) = 
+		(#S ('Index') (#Alt ((#Atom s.val1)) ((#Atom s.val2))));
 }
 
 FastGen-MeN {
