@@ -2,6 +2,8 @@ $FORWARD FastGen-Terms, FastGen-MeN, FastGen-M, Check;
 
 $LABEL Brackets, Atom, S, T, E;
 
+$LABEL Alt;
+
 $EXTERN EraseBr;
 
 $ENTRY FastGen {
@@ -11,7 +13,7 @@ $ENTRY FastGen {
 	/* 1. Предложения являются термами; cтроим БО согласно таблице */
 	((#Brackets e.body1)) ((#Brackets e.body2)) e.Tail = 
 		<FastGen 
-			((#Brackets <FastGen-Terms (e.body1) (e.body2)>))
+			(<FastGen-Terms ((#Brackets e.body1)) ((#Brackets e.body2))>)
 			e.Tail
 		>;
 	
@@ -44,21 +46,21 @@ $ENTRY FastGen {
 	(e.1) (e.2) = (#E ('Index') (#Alt (e.1) (e.2)));
 }
 
-$LABEL Alt;
-
 FastGen-Terms {
-	((#Brackets (#Brackets e.1))) ((#Brackets (#Brackets e.2))) = 
+	((#Brackets (#Atom s.val))) ((#Brackets (#Atom s.val))) = 
+		(#Brackets (#Atom s.val));
+	
+	((#Brackets (#Atom s.v1))) ((#Brackets (#Atom s.v2))) = 
+		((#Brackets (#S ('Index') (#Alt ((#Atom s.v1) (#Atom s.v2))))));
+	
+	((#Brackets (#S (e.name) (e.pat)))) ((#Brackets (#Atom s.val))) = 
+		((#Brackets (#S (e.name) (e.pat (#Atom s.val)))));
+	
+	((#Brackets (#Atom s.val))) ((#Brackets (#S (e.name) (e.pat)))) = 
+		((#Brackets (#S (e.name) (e.pat (#Atom s.val)))));
+	
+	((#Brackets (#Brackets e.1))) ((#Brackets (#Brackets e.2))) =
 		(#Brackets <FastGen-Terms ((#Brackets e.1)) ((#Brackets e.2))>);
-	
-	((#Atom s.val)) ((#Atom s.val)) = (#Atom s.val);
-	
-	(#Atom s.v1) (#Atom s.v2) = (#S ('Index') ());
-	
-	(#S (e.name) (e.pattern)) (#Atom s.val) = 
-		(#S (e.name) (#Alt (e.pattern) (s.val)));
-	
-	(#Atom s.val) (#S (e.name) (e.pattern)) = 
-		(#S (e.name) (#Alt (e.pattern) (s.val)));
 	
 	(e.1) (e.2) = (#T ('Index') (#Alt (e.1) (e.2)));
 }

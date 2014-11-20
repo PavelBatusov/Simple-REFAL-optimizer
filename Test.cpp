@@ -850,9 +850,7 @@ extern refalrts::FnResult Map(refalrts::Iter arg_begin, refalrts::Iter arg_end);
 
 extern refalrts::FnResult Fetch(refalrts::Iter arg_begin, refalrts::Iter arg_end);
 
-static refalrts::FnResult PrintPattern_Aux(refalrts::Iter arg_begin, refalrts::Iter arg_end);
-
-static refalrts::FnResult lambda_PrintPattern_Aux_0(refalrts::Iter arg_begin, refalrts::Iter arg_end) {
+static refalrts::FnResult VarName(refalrts::Iter arg_begin, refalrts::Iter arg_end) {
   refalrts::this_is_generated_function();
   do {
     refalrts::Iter bb_0 = arg_begin;
@@ -956,7 +954,9 @@ static refalrts::FnResult lambda_PrintPattern_Aux_0(refalrts::Iter arg_begin, re
   return refalrts::cRecognitionImpossible;
 }
 
-static refalrts::FnResult lambda_PrintPattern_Aux_1(refalrts::Iter arg_begin, refalrts::Iter arg_end) {
+static refalrts::FnResult PrintPattern_Aux(refalrts::Iter arg_begin, refalrts::Iter arg_end);
+
+static refalrts::FnResult lambda_PrintPattern_Aux_0(refalrts::Iter arg_begin, refalrts::Iter arg_end) {
   refalrts::this_is_generated_function();
   do {
     refalrts::Iter bb_0 = arg_begin;
@@ -1023,7 +1023,7 @@ static refalrts::FnResult lambda_PrintPattern_Aux_1(refalrts::Iter arg_begin, re
   return refalrts::cRecognitionImpossible;
 }
 
-static refalrts::FnResult lambda_PrintPattern_Aux_2(refalrts::Iter arg_begin, refalrts::Iter arg_end) {
+static refalrts::FnResult lambda_PrintPattern_Aux_1(refalrts::Iter arg_begin, refalrts::Iter arg_end) {
   refalrts::this_is_generated_function();
   do {
     refalrts::Iter bb_0 = arg_begin;
@@ -1127,7 +1127,7 @@ static refalrts::FnResult lambda_PrintPattern_Aux_2(refalrts::Iter arg_begin, re
   return refalrts::cRecognitionImpossible;
 }
 
-static refalrts::FnResult lambda_PrintPattern_Aux_3(refalrts::Iter arg_begin, refalrts::Iter arg_end) {
+static refalrts::FnResult lambda_PrintPattern_Aux_2(refalrts::Iter arg_begin, refalrts::Iter arg_end) {
   refalrts::this_is_generated_function();
   do {
     refalrts::Iter bb_0 = arg_begin;
@@ -1301,9 +1301,8 @@ static refalrts::FnResult lambda_PrintPattern_Aux_3(refalrts::Iter arg_begin, re
 #ifdef INTERPRET
     const static refalrts::ResultAction raa[] = {
       {refalrts::icBracket, 0, 0, refalrts::ibOpenCall},
-      {refalrts::icFunc, (void*) & Fetch, (void*) "Fetch"},
+      {refalrts::icFunc, (void*) & VarName, (void*) "VarName"},
       {refalrts::icSpliceSTVar, & sVar_1},
-      {refalrts::icFunc, (void*) & lambda_PrintPattern_Aux_0, (void*) "lambda_PrintPattern_Aux_0"},
       {refalrts::icBracket, 0, 0, refalrts::ibCloseCall},
       {refalrts::icChar, 0, 0, '.'},
       {refalrts::icSpliceEVar, & eIndex_b_1, & eIndex_e_1},
@@ -1312,7 +1311,7 @@ static refalrts::FnResult lambda_PrintPattern_Aux_3(refalrts::Iter arg_begin, re
       {refalrts::icChar, 0, 0, '['},
       {refalrts::icBracket, 0, 0, refalrts::ibOpenCall},
       {refalrts::icFunc, (void*) & Map, (void*) "Map"},
-      {refalrts::icFunc, (void*) & lambda_PrintPattern_Aux_1, (void*) "lambda_PrintPattern_Aux_1"},
+      {refalrts::icFunc, (void*) & lambda_PrintPattern_Aux_0, (void*) "lambda_PrintPattern_Aux_0"},
       {refalrts::icSpliceEVar, & eSubsts_b_1, & eSubsts_e_1},
       {refalrts::icBracket, 0, 0, refalrts::ibCloseCall},
       {refalrts::icChar, 0, 0, ']'},
@@ -1330,61 +1329,57 @@ static refalrts::FnResult lambda_PrintPattern_Aux_3(refalrts::Iter arg_begin, re
     if( ! refalrts::alloc_open_call( n0 ) )
       return refalrts::cNoMemory;
     refalrts::Iter n1 = 0;
-    if( ! refalrts::alloc_name( n1, & Fetch, "Fetch" ) )
+    if( ! refalrts::alloc_name( n1, & VarName, "VarName" ) )
       return refalrts::cNoMemory;
     refalrts::Iter n2 = 0;
-    if( ! refalrts::alloc_name( n2, & lambda_PrintPattern_Aux_0, "lambda_PrintPattern_Aux_0" ) )
+    if( ! refalrts::alloc_close_call( n2 ) )
       return refalrts::cNoMemory;
     refalrts::Iter n3 = 0;
-    if( ! refalrts::alloc_close_call( n3 ) )
+    if( ! refalrts::alloc_char( n3, '.' ) )
       return refalrts::cNoMemory;
     refalrts::Iter n4 = 0;
-    if( ! refalrts::alloc_char( n4, '.' ) )
+    if( ! refalrts::alloc_char( n4, '-' ) )
       return refalrts::cNoMemory;
     refalrts::Iter n5 = 0;
-    if( ! refalrts::alloc_char( n5, '-' ) )
+    if( ! refalrts::alloc_char( n5, '>' ) )
       return refalrts::cNoMemory;
     refalrts::Iter n6 = 0;
-    if( ! refalrts::alloc_char( n6, '>' ) )
+    if( ! refalrts::alloc_char( n6, '[' ) )
       return refalrts::cNoMemory;
     refalrts::Iter n7 = 0;
-    if( ! refalrts::alloc_char( n7, '[' ) )
+    if( ! refalrts::alloc_open_call( n7 ) )
       return refalrts::cNoMemory;
     refalrts::Iter n8 = 0;
-    if( ! refalrts::alloc_open_call( n8 ) )
+    if( ! refalrts::alloc_name( n8, & Map, "Map" ) )
       return refalrts::cNoMemory;
     refalrts::Iter n9 = 0;
-    if( ! refalrts::alloc_name( n9, & Map, "Map" ) )
+    if( ! refalrts::alloc_name( n9, & lambda_PrintPattern_Aux_0, "lambda_PrintPattern_Aux_0" ) )
       return refalrts::cNoMemory;
     refalrts::Iter n10 = 0;
-    if( ! refalrts::alloc_name( n10, & lambda_PrintPattern_Aux_1, "lambda_PrintPattern_Aux_1" ) )
+    if( ! refalrts::alloc_close_call( n10 ) )
       return refalrts::cNoMemory;
     refalrts::Iter n11 = 0;
-    if( ! refalrts::alloc_close_call( n11 ) )
+    if( ! refalrts::alloc_char( n11, ']' ) )
       return refalrts::cNoMemory;
     refalrts::Iter n12 = 0;
-    if( ! refalrts::alloc_char( n12, ']' ) )
+    if( ! refalrts::alloc_char( n12, ' ' ) )
       return refalrts::cNoMemory;
-    refalrts::Iter n13 = 0;
-    if( ! refalrts::alloc_char( n13, ' ' ) )
-      return refalrts::cNoMemory;
-    res = refalrts::splice_elem( res, n13 );
     res = refalrts::splice_elem( res, n12 );
-    refalrts::push_stack( n11 );
-    refalrts::push_stack( n8 );
     res = refalrts::splice_elem( res, n11 );
-    res = refalrts::splice_evar( res, eSubsts_b_1, eSubsts_e_1 );
+    refalrts::push_stack( n10 );
+    refalrts::push_stack( n7 );
     res = refalrts::splice_elem( res, n10 );
+    res = refalrts::splice_evar( res, eSubsts_b_1, eSubsts_e_1 );
     res = refalrts::splice_elem( res, n9 );
     res = refalrts::splice_elem( res, n8 );
     res = refalrts::splice_elem( res, n7 );
     res = refalrts::splice_elem( res, n6 );
     res = refalrts::splice_elem( res, n5 );
-    res = refalrts::splice_evar( res, eIndex_b_1, eIndex_e_1 );
     res = refalrts::splice_elem( res, n4 );
-    refalrts::push_stack( n3 );
-    refalrts::push_stack( n0 );
+    res = refalrts::splice_evar( res, eIndex_b_1, eIndex_e_1 );
     res = refalrts::splice_elem( res, n3 );
+    refalrts::push_stack( n2 );
+    refalrts::push_stack( n0 );
     res = refalrts::splice_elem( res, n2 );
     res = refalrts::splice_stvar( res, sVar_1 );
     res = refalrts::splice_elem( res, n1 );
@@ -1443,7 +1438,7 @@ static refalrts::FnResult lambda_PrintPattern_Aux_3(refalrts::Iter arg_begin, re
       {refalrts::icBracket, 0, 0, refalrts::ibOpenCall},
       {refalrts::icFunc, (void*) & Fetch, (void*) "Fetch"},
       {refalrts::icSpliceSTVar, & sVar_1},
-      {refalrts::icFunc, (void*) & lambda_PrintPattern_Aux_2, (void*) "lambda_PrintPattern_Aux_2"},
+      {refalrts::icFunc, (void*) & lambda_PrintPattern_Aux_1, (void*) "lambda_PrintPattern_Aux_1"},
       {refalrts::icBracket, 0, 0, refalrts::ibCloseCall},
       {refalrts::icChar, 0, 0, '.'},
       {refalrts::icSpliceEVar, & eIndex_b_1, & eIndex_e_1},
@@ -1472,7 +1467,7 @@ static refalrts::FnResult lambda_PrintPattern_Aux_3(refalrts::Iter arg_begin, re
     if( ! refalrts::alloc_name( n1, & Fetch, "Fetch" ) )
       return refalrts::cNoMemory;
     refalrts::Iter n2 = 0;
-    if( ! refalrts::alloc_name( n2, & lambda_PrintPattern_Aux_2, "lambda_PrintPattern_Aux_2" ) )
+    if( ! refalrts::alloc_name( n2, & lambda_PrintPattern_Aux_1, "lambda_PrintPattern_Aux_1" ) )
       return refalrts::cNoMemory;
     refalrts::Iter n3 = 0;
     if( ! refalrts::alloc_close_call( n3 ) )
@@ -1530,40 +1525,6 @@ static refalrts::FnResult lambda_PrintPattern_Aux_3(refalrts::Iter arg_begin, re
 #endif
   } while ( 0 );
 
-  do {
-    refalrts::Iter bb_0 = arg_begin;
-    refalrts::Iter be_0 = arg_end;
-    refalrts::move_left( bb_0, be_0 );
-    refalrts::move_left( bb_0, be_0 );
-    refalrts::move_right( bb_0, be_0 );
-    static refalrts::Iter eSubst_b_1;
-    refalrts::use( eSubst_b_1 );
-    static refalrts::Iter eSubst_e_1;
-    refalrts::use( eSubst_e_1 );
-    // e.Subst
-    eSubst_b_1 = bb_0;
-    refalrts::use( eSubst_b_1 );
-    eSubst_e_1 = be_0;
-    refalrts::use( eSubst_e_1 );
-#ifdef INTERPRET
-    const static refalrts::ResultAction raa[] = {
-      {refalrts::icSpliceEVar, & eSubst_b_1, & eSubst_e_1},
-      {refalrts::icEnd}
-    };
-    refalrts::Iter allocs[2*sizeof(raa)/sizeof(raa[0])];
-    refalrts::FnResult res = refalrts::interpret_array( raa, allocs, arg_begin, arg_end );
-    return res;
-#else
-
-    refalrts::reset_allocator();
-    refalrts::Iter res = arg_begin;
-    res = refalrts::splice_evar( res, eSubst_b_1, eSubst_e_1 );
-    refalrts::use( res );
-    refalrts::splice_to_freelist( arg_begin, arg_end );
-    return refalrts::cSuccess;
-#endif
-  } while ( 0 );
-
   return refalrts::cRecognitionImpossible;
 }
 
@@ -1588,7 +1549,7 @@ static refalrts::FnResult PrintPattern_Aux(refalrts::Iter arg_begin, refalrts::I
     const static refalrts::ResultAction raa[] = {
       {refalrts::icBracket, 0, 0, refalrts::ibOpenCall},
       {refalrts::icFunc, (void*) & Map, (void*) "Map"},
-      {refalrts::icFunc, (void*) & lambda_PrintPattern_Aux_3, (void*) "lambda_PrintPattern_Aux_3"},
+      {refalrts::icFunc, (void*) & lambda_PrintPattern_Aux_2, (void*) "lambda_PrintPattern_Aux_2"},
       {refalrts::icSpliceEVar, & eExpr_b_1, & eExpr_e_1},
       {refalrts::icBracket, 0, 0, refalrts::ibCloseCall},
       {refalrts::icEnd}
@@ -1607,7 +1568,7 @@ static refalrts::FnResult PrintPattern_Aux(refalrts::Iter arg_begin, refalrts::I
     if( ! refalrts::alloc_name( n1, & Map, "Map" ) )
       return refalrts::cNoMemory;
     refalrts::Iter n2 = 0;
-    if( ! refalrts::alloc_name( n2, & lambda_PrintPattern_Aux_3, "lambda_PrintPattern_Aux_3" ) )
+    if( ! refalrts::alloc_name( n2, & lambda_PrintPattern_Aux_2, "lambda_PrintPattern_Aux_2" ) )
       return refalrts::cNoMemory;
     refalrts::Iter n3 = 0;
     if( ! refalrts::alloc_close_call( n3 ) )
