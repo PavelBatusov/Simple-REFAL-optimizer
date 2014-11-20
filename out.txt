@@ -11,7 +11,33 @@ HardGen:
 ((#a #b #a #c #a #b #a ) ) 
 
 FastGen:
-(t.Index->[(#a ) |(#a #b #a #c #a #b #a ) |] ) 
+(t.Index_c->[(#a ) |(#a #b #a #c #a #b #a ) |] ) 
+
+Input sentence: ((a)) e.name1 ((a) (b)) = <Fun1>; ((b)) e.name1 (e.name2) = <Fun2>;
+
+Patterns:
+((#a ) ) e.name1->[] ((#a ) (#b ) ) 
+((#b ) ) e.name1->[] (e.name2->[] ) 
+
+HardGen:
+((#a ) ) e.Index_rl->[e.name1->[] |] ((#a ) (#b ) ) 
+((#b ) ) e.Index_rl->[e.name1->[] |] (e.Index_rr->[e.name2->[] |] ) 
+
+FastGen:
+((s.Index_cc->[#a |#b |] ) ) e.Index_r->[e.Index->[e.name1->[] |] |e.Index->[e.name1->[] |] |] t.Index_rr->[((#a ) (#b ) ) |(e.Index_rr->[e.name2->[] |] ) |] 
+
+Input sentence: (b) (b) (c) ((d)) = <Fun1>; (s.1) (s.1) (c) (t.1) = <Fun2>;
+
+Patterns:
+(#b ) (#b ) (#c ) ((#d ) ) 
+(s.1->[] ) (s.1->[] ) (#c ) (t.1->[] ) 
+
+HardGen:
+(#b ) (#b ) (#c ) ((#d ) ) 
+(s.Index_l->[s.1->[] |] ) (s.Index_rl->[s.1->[] |] ) (#c ) (t.Index_rrr->[t.1->[] |] ) 
+
+FastGen:
+(s.Index_c->[s.1->[] |#b |] ) (s.Index_rc->[s.1->[] |#b |] ) (#c ) t.Index_rrr->[((#d ) ) |(t.Index_rrr->[t.1->[] |] ) |] 
 
 Input sentence: A = ; s.1 = ;
 
@@ -24,3 +50,38 @@ HardGen:
 s.Index_->[s.1->[] |] 
 
 FastGen:
+e.Index_->[#A |s.Index_->[s.1->[] |] |] 
+
+Input sentence: a b e.X c d = ;
+
+Patterns:
+#a #b e.X->[] #c #d 
+
+HardGen:
+#a #b e.Index_rrll->[e.X->[] |] #c #d 
+
+FastGen:
+#a #b e.Index_rrll_rr->[e.X->[] |] #c #d 
+
+Input sentence: A e.X B e.Y C = ;
+
+Patterns:
+#A e.X->[] #B e.Y->[] #C 
+
+HardGen:
+#A e.Index_rl->[e.X->[] #B e.Y->[] |] #C 
+
+FastGen:
+#A e.Index_rl_r->[e.X->[] #B e.Y->[] |] #C 
+
+Input sentence: A e.X (e.Y) = ;
+
+Patterns:
+#A e.X->[] (e.Y->[] ) 
+
+HardGen:
+#A e.Index_lr->[e.X->[] |] (e.Index_r->[e.Y->[] |] ) 
+
+FastGen:
+#A e.Index_lr_lr->[e.X->[] |] (e.Index_r_c->[e.Y->[] |] ) 
+

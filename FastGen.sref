@@ -26,7 +26,7 @@ $ENTRY FastGen {
 				((#Brackets e.left1) e.1 (#E (e.name1) (e.pattern1)) e.2 
 				(#Brackets e.right1)) ((#Brackets e.left2) e.3 (#E (e.name2) 
 				(e.pattern2)) e.4 (#Brackets e.right2)) 
-			>) 
+			>)
 			e.Tail
 		>;
 	
@@ -43,7 +43,7 @@ $ENTRY FastGen {
 		>;
 	
 	/* 4. Все остальное */
-	(e.1) (e.2) = (#E ('Index') (#Alt (e.1) (e.2)));
+	(e.1) (e.2) = ((#E ('Index') (#Alt (e.1) (e.2))));
 }
 
 FastGen-Terms {
@@ -51,13 +51,13 @@ FastGen-Terms {
 		(#Brackets (#Atom s.val));
 	
 	((#Brackets (#Atom s.v1))) ((#Brackets (#Atom s.v2))) = 
-		((#Brackets (#S ('Index') (#Alt ((#Atom s.v1) (#Atom s.v2))))));
+		(#Brackets (#S ('Index') (#Alt ((#Atom s.v1)) ((#Atom s.v2)))));
 	
 	((#Brackets (#S (e.name) (e.pat)))) ((#Brackets (#Atom s.val))) = 
-		((#Brackets (#S (e.name) (e.pat (#Atom s.val)))));
+		(#Brackets (#S ('Index') (e.pat ((#Atom s.val)))));
 	
 	((#Brackets (#Atom s.val))) ((#Brackets (#S (e.name) (e.pat)))) = 
-		((#Brackets (#S (e.name) (e.pat (#Atom s.val)))));
+		(#Brackets (#S ('Index') (e.pat ((#Atom s.val)))));
 	
 	((#Brackets (#Brackets e.1))) ((#Brackets (#Brackets e.2))) =
 		(#Brackets <FastGen-Terms ((#Brackets e.1)) ((#Brackets e.2))>);
@@ -69,18 +69,12 @@ FastGen-MeN {
 	((#Brackets e.left1) e.1 (#E (e.name1) (e.pattern1)) e.2 (#Brackets e.right1))
 	((#Brackets e.left2) e.3 (#E (e.name2) (e.pattern2)) e.4 (#Brackets e.right2)) 
 	= 
-			<FastGen 
-				(#Brackets e.left1) (#Brackets e.left2)
-			>
-		
+		<EraseBr <FastGen ((#Brackets e.left1)) ((#Brackets e.left2)) > >
 		<FastGen-MeN 
-			(e.1 (#E (e.name1) (e.pattern1)) e.2)
-			(e.3 (#E (e.name2) (e.pattern2)) e.4)
-		> 
-		 
-			<FastGen 
-				(#Brackets e.right1) (#Brackets e.right2)
-			>
+				(e.1 (#E ('Index') (e.pattern1)) e.2)
+				(e.3 (#E ('Index') (e.pattern2)) e.4)
+		>
+		<EraseBr <FastGen ((#Brackets e.right1)) ((#Brackets e.right2)) > >
 		;
 	(e.1) (e.2) = (#E ('Index') (#Alt (e.1) (e.2)));
 }
@@ -93,14 +87,8 @@ Check {
 
 FastGen-M {
 	1 ((#Brackets e.left1) e.1) ((#Brackets e.left2) e.2) = 
-		(<EraseBr 
-			<FastGen 
-				(e.left1) (e.left2)
-			>
-		> 
-		<EraseBr 
-			<FastGen-M 1 (e.1) (e.2)>
-		>);
+		<FastGen-Terms ((#Brackets e.left1)) ((#Brackets e.left2))> 
+		<FastGen-M 1 (e.1) (e.2)>;
 	1 () () = ;
-	0 e.1 = (#E ('Index') (#Alt (e.1)));
+	0 (e.1) = (#E ('Index') (#Alt (e.1)));
 }

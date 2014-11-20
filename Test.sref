@@ -22,7 +22,7 @@ Test {
 		>
 		<PrintPattern
 			('FastGen:')
-			<FastGen <HardGen <MakePatterns e.Sent>>>
+			<MakeIndexes <FastGen <HardGen <MakePatterns e.Sent>>> ('_')>
 		>
 		<WriteLine>;
 }
