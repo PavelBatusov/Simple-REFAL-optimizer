@@ -1,6 +1,7 @@
+A = ; s.1 = ;
 ((a)) = <Fun1>; ((a)) = <Fun2>; ((abacaba)) = <Fun3>;
-((a)) e.name1 ((a) (b)) = <Fun1>; ((b)) e.name1 (e.name2) = <Fun2>;
 (b) (b) (c) ((d)) = <Fun1>; (s.1) (s.1) (c) (t.1) = <Fun2>;
+((a)) e.name1 ((a) (b)) = <Fun1>; ((b)) e.name1 (e.name2) = <Fun2>;
 a b e.X c d = ;
 A e.X B e.Y C = ;
 A e.X (e.Y) = ;

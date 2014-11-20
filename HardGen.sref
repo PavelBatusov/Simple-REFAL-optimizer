@@ -1,6 +1,6 @@
 $EXTERN WriteLine;
 
-$LABEL S, T, E, Atom, Brackets;
+$LABEL S, T, E, Atom, Brackets, Alt;
 
 CreateHardSent {
 	/* предлажение имеет вид (P') */
@@ -18,20 +18,20 @@ CreateHardSent {
 	
 	/* переменные */
 	(#S (e.name) (e.pattern)) e.smth ( e.tek_index ) = 
-		(#S ('Index' e.tek_index) ('s.Index' e.tek_index '->' 's.' e.name))
+		(#S ('Index' e.tek_index) (#Alt ((#S (e.name) ()))))
 		<CreateHardSent e.smth (e.tek_index'r')>;
 	
 	e.smth (#S (e.name) (e.pattern)) ( e.tek_index ) = 
 		<CreateHardSent e.smth (e.tek_index'l')>
-		(#S ('Index' e.tek_index) ('s.Index' e.tek_index '->' 's.' e.name));
+		(#S ('Index' e.tek_index) (#Alt ((#S (e.name) ()))));
 	
 	(#T (e.name) (e.pattern)) e.smth ( e.tek_index ) = 
-		(#T ('Index' e.tek_index) ('t.Index' e.tek_index '->' 't.' e.name))
+		(#T ('Index' e.tek_index) (#Alt ((#T (e.name) ()))))
 		<CreateHardSent e.smth (e.tek_index'r')>;
 	
 	e.smth (#T (e.name) (e.pattern)) ( e.tek_index ) = 
 		<CreateHardSent e.smth (e.tek_index'l')>
-		(#T ('Index' e.tek_index) ('t.Index' e.tek_index '->' 't.' e.name));
+		(#T ('Index' e.tek_index) (#Alt ((#T (e.name) ()))));
 	
 	/* атом */
 	(#Atom e.attr) e.smth ( e.tek_index ) = 
@@ -47,7 +47,7 @@ CreateHardSent {
 	 
 	/* все остальное */
 	e.smth ( e.tek_index ) = 
-		(#E ('Index' e.tek_index) ('e.Index'e.tek_index'->'e.smth));
+		(#E ('Index' e.tek_index) (#Alt (e.smth)));
 }
 
 $ENTRY HardGen {

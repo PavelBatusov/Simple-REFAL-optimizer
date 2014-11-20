@@ -11,9 +11,7 @@ $ENTRY FastGen {
 	/* 1. Предложения являются термами; cтроим БО согласно таблице */
 	((#Brackets e.body1)) ((#Brackets e.body2)) e.Tail = 
 		<FastGen 
-			(<FastGen-Terms 
-				((#Brackets e.body1)) ((#Brackets e.body2))
-			>)
+			((#Brackets <FastGen-Terms (e.body1) (e.body2)>))
 			e.Tail
 		>;
 	
@@ -43,21 +41,26 @@ $ENTRY FastGen {
 		>;
 	
 	/* 4. Все остальное */
-	(e.1) (e.2) = (#E ('Index') ('e.Index->' e.1 ';e.Index->' e.2));
+	(e.1) (e.2) = (#E ('Index') (#Alt (e.1) (e.2)));
 }
+
+$LABEL Alt;
 
 FastGen-Terms {
 	((#Brackets (#Brackets e.1))) ((#Brackets (#Brackets e.2))) = 
-		(#Brackets <EraseBr <FastGen ((#Brackets e.1)) ((#Brackets e.2))>>);
+		(#Brackets <FastGen-Terms ((#Brackets e.1)) ((#Brackets e.2))>);
 	
-	(#Atom s.val) (#Atom s.val) = (#Atom s.val);
+	((#Atom s.val)) ((#Atom s.val)) = (#Atom s.val);
+	
 	(#Atom s.v1) (#Atom s.v2) = (#S ('Index') ());
-	(#S (e.name) (e.pattern)) (#Atom s.val) = 
-		(#S (e.name) (e.pattern ';' e.name '->' s.val));
-	(#Atom s.val) (#S (e.name) (e.pattern)) = 
-		(#S (e.name) (e.pattern ';' e.name '->' s.val));
 	
-	(e.1) (e.2) = (#T ('Index') ('t.Index->' e.1 ';t.Index->' e.2));
+	(#S (e.name) (e.pattern)) (#Atom s.val) = 
+		(#S (e.name) (#Alt (e.pattern) (s.val)));
+	
+	(#Atom s.val) (#S (e.name) (e.pattern)) = 
+		(#S (e.name) (#Alt (e.pattern) (s.val)));
+	
+	(e.1) (e.2) = (#T ('Index') (#Alt (e.1) (e.2)));
 }
 
 FastGen-MeN {
@@ -77,7 +80,7 @@ FastGen-MeN {
 				(#Brackets e.right1) (#Brackets e.right2)
 			>
 		;
-	(e.1) (e.2) = (#E ('Index') ('e.Index->' e.1 ';e.Index->' e.2));
+	(e.1) (e.2) = (#E ('Index') (#Alt (e.1) (e.2)));
 }
 
 Check {
@@ -97,5 +100,5 @@ FastGen-M {
 			<FastGen-M 1 (e.1) (e.2)>
 		>);
 	1 () () = ;
-	0 e.1 = (#E ('Index') ('e.Index->' e.1));
+	0 e.1 = (#E ('Index') (#Alt (e.1)));
 }
