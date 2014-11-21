@@ -5,3 +5,5 @@ A = ; s.1 = ;
 a b e.X c d = ;
 A e.X B e.Y C = ;
 A e.X (e.Y) = ;
+(x y) e.1 (s.2) = ; (x y z) e.3 ((e.4)) = ; (x e.3) e.6 (s.7) = ;
+(x y) = ; (x y z) = ; (x e.3) = ;

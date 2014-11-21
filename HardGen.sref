@@ -43,8 +43,8 @@ CreateHardSent {
 		(#Atom e.attr);
 		
 	/* пусто */
-	 ( e.tek_index ) = ;
-	 
+	( e.tek_index ) = ;
+	
 	/* все остальное */
 	e.smth ( e.tek_index ) = 
 		(#E ('Index' e.tek_index) (#Alt (e.smth)));

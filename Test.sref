@@ -1,9 +1,9 @@
-$EXTERN LoadFile, WriteLine, Parser, Error, HardGen, FastGen, MakeIndexes;
+$EXTERN LoadFile, WriteLine, Parser, Error, HardGen, FastGen, MakeIndexes, EraseBr;
 
 MakePatterns {
 	e.Pattern '=' e.Result ';' e.Tail = 
 		(<Parser e.Pattern>) <MakePatterns e.Tail>;
-	 = ;
+	= ;
 	e.smth = <Error 'Bad scentence: ' e.smth>;
 }
 
@@ -11,7 +11,7 @@ $FORWARD PrintPattern;
 
 Test {
 	(e.Sent) =
-		<WriteLine 'Input sentence: ' e.Sent> 
+				<WriteLine 'Input: ' e.Sent>
 		<PrintPattern
 			('Patterns:') 
 			<MakePatterns e.Sent>
@@ -22,7 +22,7 @@ Test {
 		>
 		<PrintPattern
 			('FastGen:')
-			<MakeIndexes <FastGen <HardGen <MakePatterns e.Sent>>> ('_')>
+			(<MakeIndexes <EraseBr <FastGen <HardGen <MakePatterns e.Sent>>>> ('_')>)
 		>
 		<WriteLine>;
 }
@@ -46,9 +46,15 @@ PrintPattern-Aux {
 						e.Substs
 					>
 					'] ';
+
+				(s.Var (e.Index) ()) =
+					<Fetch s.Var { #E = 'e'; #T = 't'; #S = 's'; }> '.' e.Index ' ';
+
 				(s.Var (e.Index) (e.Subst)) =
 					<Fetch s.Var { #E = 'e'; #T = 't'; #S = 's'; }>
 					'.' e.Index '->[' <PrintPattern-Aux e.Subst> '] ';
+				
+				() = ;
 			}
 			e.Expr
 		>;
@@ -66,5 +72,5 @@ PrintPattern {
 }
 
 $ENTRY Go {
-	 = <Map Test <LoadFile 'Test.txt'>>;
+	= <Map Test <LoadFile 'Test.txt'>>;
 }

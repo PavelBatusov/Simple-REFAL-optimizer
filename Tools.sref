@@ -1,4 +1,4 @@
-$EXTERN WriteLine, Exit;
+$EXTERN WriteLine, Exit, EraseBr;
 
 $ENTRY Error {
 	e.Err = <WriteLine e.Err> <Exit 1>;
@@ -9,17 +9,20 @@ $ENTRY EraseBr {
 	e.1 = e.1;
 }
 
-$LABEL Brackets, Atom;
+$LABEL Brackets, Atom, Alt;
 
 $ENTRY MakeIndexes {
 	e.left (#Brackets e.center) e.right (e.index) = 
 		<MakeIndexes e.left (e.index'l')> 
 		(#Brackets <MakeIndexes e.center (e.index'c')>)
 		<MakeIndexes e.right (e.index'r')>;
-	(#Atom e.attr) e.tail (e.index) = (#Atom e.attr) <MakeIndexes e.tail (e.index'r')>;
+
+	(#Atom e.attr) e.tail (e.index) = 
+		(#Atom e.attr) <MakeIndexes e.tail (e.index'r')>;
+
 	(s.VarType (e.name) (e.patt)) e.tail (e.index) =
 		(s.VarType (e.name e.index) (e.patt))
 		<MakeIndexes e.tail (e.index'r')>;
+
 	(e.index) = ;
-	(e.smth) (e.index) = (<MakeIndexes e.smth (e.index)>);
 }

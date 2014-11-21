@@ -33,7 +33,7 @@ PatternLexer {
 	
 	s.Atom e.tail = (#Atom s.Atom) <PatternLexer e.tail>;
 	
-	 = ;
+	= ;
 }
 
 ParseName {
