@@ -52,14 +52,22 @@ FastGen-Terms {
 		(#E ('Index') (#Alt ((#E (e.name) (e.pattern))) ((s.type e.body))));
 		
 	((s.type e.body)) ((#E (e.name) (e.pattern))) =
+<<<<<<< HEAD
 		(#E ('Index') (#Alt ((s.type e.body)) ((#E (e.name) (e.pattern)))));
+=======
+		(#E ('Index') (#Alt ((s.type e.body))) ((#E (e.name) (e.pattern))));
+>>>>>>> a3b9c52477f58a97f7c20ea9165f453bcd575b43
 	
 	/* с #T переменной - все #T переменная */
 	((#T (e.name) (e.pattern))) ((s.type e.body)) =
 		(#T ('Index') (#Alt ((#T (e.name) (e.pattern))) ((s.type e.body))));
 	
 	((s.type e.body)) ((#T (e.name) (e.pattern))) =
+<<<<<<< HEAD
 		(#T ('Index') (#Alt ((s.type e.body)) ((#T (e.name) (e.pattern)))));
+=======
+		(#T ('Index') (#Alt ((s.type e.body))) ((#T (e.name) (e.pattern))));
+>>>>>>> a3b9c52477f58a97f7c20ea9165f453bcd575b43
 	
 	/* #S переменная */
 	((#S (e.name) (e.pattern))) ((#Brackets e.body)) =
@@ -72,7 +80,11 @@ FastGen-Terms {
 		(#S ('Index') (#Alt ((#S (e.name) (e.pattern))) ((s.type e.body))));
 	
 	((s.type e.body)) ((#S (e.name) (e.pattern))) =
+<<<<<<< HEAD
 		(#S ('Index') (#Alt ((s.type e.body)) ((#S (e.name) (e.pattern)))));
+=======
+		(#S ('Index') (#Alt ((s.type e.body))) ((#S (e.name) (e.pattern))));
+>>>>>>> a3b9c52477f58a97f7c20ea9165f453bcd575b43
 	
 	/* Атом */
 	((#Atom s.val)) ((#Atom s.val)) = (#Atom s.val);
