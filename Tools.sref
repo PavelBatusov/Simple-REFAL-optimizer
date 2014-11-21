@@ -21,7 +21,7 @@ $ENTRY MakeIndexes {
 		(#Atom e.attr) <MakeIndexes e.tail (e.index'r')>;
 
 	(s.VarType (e.name) (e.patt)) e.tail (e.index) =
-		(s.VarType (e.name e.index) (e.patt))
+		(s.VarType (e.index) (e.patt))
 		<MakeIndexes e.tail (e.index'r')>;
 
 	(e.index) = ;

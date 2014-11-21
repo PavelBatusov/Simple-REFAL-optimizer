@@ -22,7 +22,7 @@ Test {
 		>
 		<PrintPattern
 			('FastGen:')
-			(<MakeIndexes <EraseBr <FastGen <HardGen <MakePatterns e.Sent>>>> ('_')>)
+			(<MakeIndexes <EraseBr <FastGen <HardGen <MakePatterns e.Sent>>>> ('i_')>)
 		>
 		<WriteLine>;
 }
@@ -39,6 +39,15 @@ PrintPattern-Aux {
 			{
 				(#Atom s.Value) = '#' s.Value ' ';
 				(#Brackets e.InBrackets) = '(' <PrintPattern-Aux e.InBrackets> ') ';
+				
+				(s.Var ('$') (#Alt e.Substs)) =
+					'['
+					<Map
+						{ (e.Pattern) = <PrintPattern-Aux e.Pattern> '|'; }
+						e.Substs
+					>
+					'] ';
+					
 				(s.Var (e.Index) (#Alt e.Substs)) =
 					<VarName s.Var> '.' e.Index '->['
 					<Map
@@ -49,12 +58,6 @@ PrintPattern-Aux {
 
 				(s.Var (e.Index) ()) =
 					<Fetch s.Var { #E = 'e'; #T = 't'; #S = 's'; }> '.' e.Index ' ';
-
-				(s.Var (e.Index) (e.Subst)) =
-					<Fetch s.Var { #E = 'e'; #T = 't'; #S = 's'; }>
-					'.' e.Index '->[' <PrintPattern-Aux e.Subst> '] ';
-				
-				() = ;
 			}
 			e.Expr
 		>;
