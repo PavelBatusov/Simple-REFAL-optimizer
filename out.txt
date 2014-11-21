@@ -115,3 +115,146 @@ HardGen:
 FastGen:
 (e.i_c->[[#x #y |#x #y #z |] |#x e.Index_r->[e.3 |] |] ) 
 
+Input: () s.1 = ; (e.2) s.X = ;
+
+Patterns:
+() s.1 
+(e.2 ) s.X 
+
+HardGen:
+() s.Index_r->[s.1 |] 
+(e.Index_l->[e.2 |] ) s.Index_r->[s.X |] 
+
+FastGen:
+(e.i_c->[|e.Index_l->[e.2 |] |] ) s.i_r->[s.Index_r->[s.1 |] |s.Index_r->[s.X |] |] 
+
+Input: () s.1 = ; (e.2)  = ;
+
+Patterns:
+() s.1 
+(e.2 ) 
+
+HardGen:
+() s.Index_r->[s.1 |] 
+(e.Index_->[e.2 |] ) 
+
+FastGen:
+e.i_->[() s.Index_r->[s.1 |] |(e.Index_->[e.2 |] ) |] 
+
+Input: (()) t.X = ; (b) a = ;
+
+Patterns:
+(() ) t.X 
+(#b ) #a 
+
+HardGen:
+(() ) t.Index_r->[t.X |] 
+(#b ) #a 
+
+FastGen:
+(t.i_c->[() |#b |] ) t.i_r->[t.Index_r->[t.X |] |#a |] 
+
+Input: a a a a = ; a a a = ;
+
+Patterns:
+#a #a #a #a 
+#a #a #a 
+
+HardGen:
+#a #a #a #a 
+#a #a #a 
+
+FastGen:
+e.i_->[#a #a #a #a |#a #a #a |] 
+
+Input: a a e.1 b b = ; a a a e.2 b = ;
+
+Patterns:
+#a #a e.1 #b #b 
+#a #a #a e.2 #b 
+
+HardGen:
+#a #a e.Index_rrll->[e.1 |] #b #b 
+#a #a #a e.Index_rrrl->[e.2 |] #b 
+
+FastGen:
+#a #a e.i_rr->[[e.1 |] #b |#a [e.2 |] |] #b 
+
+Input: = ; t.X = ;
+
+Patterns:
+
+t.X 
+
+HardGen:
+
+t.Index_->[t.X |] 
+
+FastGen:
+e.i_->[|t.Index_->[t.X |] |] 
+
+Input: a a a a = ; b b b b = ;
+
+Patterns:
+#a #a #a #a 
+#b #b #b #b 
+
+HardGen:
+#a #a #a #a 
+#b #b #b #b 
+
+FastGen:
+s.i_->[#a |#b |] s.i_r->[#a |#b |] s.i_rr->[#a |#b |] s.i_rrr->[#a |#b |] 
+
+Input: a () = ; () b = ;
+
+Patterns:
+#a () 
+() #b 
+
+HardGen:
+#a () 
+() #b 
+
+FastGen:
+t.i_->[#a |() |] t.i_r->[() |#b |] 
+
+Input: e.1 () e.2 () e.3 = ; e.1 () e.2 () e.3 = ;
+
+Patterns:
+e.1 () e.2 () e.3 
+e.1 () e.2 () e.3 
+
+HardGen:
+e.Index_->[e.1 () e.2 () e.3 |] 
+e.Index_->[e.1 () e.2 () e.3 |] 
+
+FastGen:
+e.i_->[e.Index_->[e.1 () e.2 () e.3 |] |e.Index_->[e.1 () e.2 () e.3 |] |] 
+
+Input: (()) a b ((a)) = ; (()) () () ((b)) = ;
+
+Patterns:
+(() ) #a #b ((#a ) ) 
+(() ) () () ((#b ) ) 
+
+HardGen:
+(() ) #a #b ((#a ) ) 
+(() ) () () ((#b ) ) 
+
+FastGen:
+(() ) t.i_rl->[#a |() |] t.i_rlr->[#b |() |] ((s.i_rcc->[#a |#b |] ) ) 
+
+Input: a b c () s.1 = ; a c b () d = ;
+
+Patterns:
+#a #b #c () s.1 
+#a #c #b () #d 
+
+HardGen:
+#a #b #c () s.Index_->[s.1 |] 
+#a #c #b () #d 
+
+FastGen:
+#a s.i_lr->[#b |#c |] s.i_lrr->[#c |#b |] () s.i_r->[s.Index_->[s.1 |] |#d |] 
+
