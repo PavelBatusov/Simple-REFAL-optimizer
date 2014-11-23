@@ -55,7 +55,7 @@ PrintPattern-Aux {
 						e.Substs
 					>
 					'] ';
-
+				
 				(s.Var (e.Index) ()) =
 					<Fetch s.Var { #E = 'e'; #T = 't'; #S = 's'; }> '.' e.Index ' ';
 			}

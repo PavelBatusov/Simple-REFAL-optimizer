@@ -126,7 +126,7 @@ HardGen:
 (e.Index_l->[e.2 |] ) s.Index_r->[s.X |] 
 
 FastGen:
-(e.i_c->[|e.Index_l->[e.2 |] |] ) s.i_r->[s.Index_r->[s.1 |] |s.Index_r->[s.X |] |] 
+(e.i_c->[e.Index_l->[e.2 |] |] ) s.i_r->[s.Index_r->[s.1 |] |s.Index_r->[s.X |] |] 
 
 Input: () s.1 = ; (e.2)  = ;
 
@@ -191,7 +191,7 @@ HardGen:
 t.Index_->[t.X |] 
 
 FastGen:
-e.i_->[|t.Index_->[t.X |] |] 
+e.i_->[t.Index_->[t.X |] |] 
 
 Input: a a a a = ; b b b b = ;
 
