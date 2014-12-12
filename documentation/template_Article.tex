@@ -176,12 +176,12 @@ MMMMММММMMMMMMMMMM \= \kill
 Атом := X | s"=переменная.
 
 \subsection[Уточнение образцов]{\large Уточнение образцов}
-\hspace{\parindent} \textit{Подстановка} --- замкнутая на множестве жестких образцов замена переменных в образце соответствующими образцами ($S = \{ e_1 \to p_1, t_2 \to p_2, \ldots \}$ $ P \xrightarrow{S} P^'$). Один из возможных примеров подстановки (\ref{eq:math:insert_example}). 
+\hspace{\parindent} \textit{Подстановка} --- замкнутая на множестве жестких образцов замена переменных в образце соответствующими образцами ($S = \{ e_1 \to p_1, t_2 \to p_2, \ldots \} $ $ P \xrightarrow{S} P^{'} $). Один из возможных примеров подстановки (\ref{eq:math:insert_example}). 
 \begin{equation}\label{eq:math:insert_example}
 \begin{array}{l l l}
 P & = & t_1 e_2 t_3 \\
 S & = & \{ t_1 \to (e_4), e_2 \to s_5 e_6 \} \\
-P^' & = & (e_4) s_5 e_6 t_3
+P^{'} & = & (e_4) s_5 e_6 t_3
 \end{array}
 \end{equation} 
 
@@ -238,11 +238,11 @@ e_1 t_2 t_3 \xrightarrow{e_1 \to \varepsilon, t_2 \to s} s t_3
 \begin{tabular}{|c|c|c|c|c|}
 \hline
 \multirow{2}{*}{$P_1$}   & \multicolumn{4}{c|}{$P_2$}                                                                                                 \\ \cline{2-5} 
-                        & x & s & ($P_2^'$) & t \\ \hline
+                        & x & s & ($P_2^{'}$) & t \\ \hline
 x & x & s & t & t \\ \hline
 y $\neq$ x & s & s & t & t \\ \hline
 s & s & s & t & t \\ \hline
-($P_1^'$) & t & t & (БО($P_1^'$, $P_2^'$)) & t \\ \hline
+($P_1^{'}$) & t & t & (БО($P_1^{'}$, $P_2^{'}$)) & t \\ \hline
 t & t & t & t & t \\ \hline
 \end{tabular}
 \end{center}
@@ -310,13 +310,15 @@ P_2 = T_1^2 \ldots T_k^2
 \subsection[Классы образцов]{\large Классы образцов}
 \hspace{\parindent} Образец вида $L_1 \ldots L_N e R_M \ldots R_1$, где $L_i, R_j$ --- термы, будем называть \textit{образцом класса $(M, N)$}.\\
 \indent Образец вида $T_1 \ldots T_K$ будем называть \textit{образцом класса $(K)$}. \\
-\indent Пусть $P_1 \ldots P_K$ --- образцы класса $(N_i, M_i)$, тогда ЛСО относится к классу $(min(N_i), min(M_i)), i = 1 \ldots k$. Пусть $P_1$ класса $(K_1)$, $P_2$ --- класса $(K_2)$, и $K_1 < K_2$, то каждое из ЛСО будет относиться к классам $(i, K_1 - i), i = 0 \ldots K_1$. Если $P_1$ и $P_2$ относятся к разным классам и $K \geq M + N$, то ЛСО относится к классу $(M, N)$, иначе, если $K < M + N$, то необходимо рассмотреть следующие случаи:
+\indent Пусть $P_1 \ldots P_K$ --- образцы класса $(N_i, M_i)$, тогда ЛСО относится к классу $(min(N_i),$ $ min(M_i))$, $i = 1 \ldots k$. Если же все образцы относятся к классу $(K)$, то аналогично предыдущему случаю их ЛСО относится к классу $(j, min(K_i) - j), i = 1 \ldots k,$ $j = 1 \ldots min(K_i)$.\\
+\indent Рассмотрим случаи, когда в исходном множестве образцов $P_1 \ldots P_k$ встречаются образцы обоих классов. Пусть $K_{min} = min(K_i)$, где индекс $i$ пробегает по всем образцам класса $(K)$, а $M_{min}$ и $N_{min}$ --- соответственно минимум среди всех $M$ и $N$ образцов класса $(M, N)$. В таком случае возможны следующие варианты класса полученного ЛСО:
 
 \begin{itemize}
-\item $K \geq M$, $K \geq N$, ЛСО относится к классу $(K - N + i, N - i))$, $i = 0 \ldots M + N - K$
-\item $K < M$, $K \geq N$, ЛСО относится к классам $(K - N + i, N - i)$, $i = 0 \ldots N$ 
-\item $K \geq M$, $K < N$, ЛСО относится к классу $(K - M + i, M - i)$, $i = 0 \ldots M$
-\item $K < M$, $K < N$, ЛСО относится к классу $(i, K - i)$, $i = 0 \ldots K$
+\item $K_{min} > M_{min} + N_{min}$, ЛСО относится к классу $(M_{min}, N_{min})$
+\item $K_{min} < M_{min} + N_{min}$, и $K_{min} > M_{min}$, $K_{min} > N_{min}$, ЛСО относится к классам\\ \indent$(i, K_{min} - i)$, $i = K_{min} - N_{min} \ldots M_{min}$ 
+\item $K_{min} < M_{min} + N_{min}$, и $K_{min} < M_{min}$, $K_{min} > N_{min}$, ЛСО относится к классам\\ \indent$(i, K_{min} - i)$, $i = K_{min} - N_{min} \ldots K_{min}$ 
+\item $K_{min} < M_{min} + N_{min}$, и $K_{min} > M_{min}$, $K_{min} < N_{min}$, ЛСО относится к классам\\ \indent$(K_{min} - i, i)$, $i = K_{min} - M_{min} \ldots K_{min}$
+\item $K_{min} < M_{min} + N_{min}$, и $K_{min} < M_{min}$, $K_{min} < N_{min}$, ЛСО относится к классам\\ \indent$(i, K_{min} - i)$, $i = 0 \ldots K_{min}$
 \end{itemize}
  
 
@@ -324,7 +326,7 @@ P_2 = T_1^2 \ldots T_k^2
 \hspace{\parindent} На первом этапе оптимизации все образцы функции приводятся к жестким образцам. Для $i = 1 \ldots N$ $P_{Hi} = $ СЖО$(P_i)$, $P_{Hi} \xrightarrow{S_{Hi}} P_i$.\\
 \indent Следующий шаг заключается в вычислении быстрого обобщения $P^{*} = $ БО$(P_{H1} \ldots P_{Hn})$, $P^{*} \xrightarrow{S_i} P_{Hi}$, $S_i = \{v_j \to P_{ij}$ $|$ $j = 1\ldots k \}$ и генерации его кода. Для каждой $v_j$ необходимо построить $P_j^* = $ ГСО($P_{1j} \ldots P_{Nj}$) --- листинг \ref{alg_gso}.
  
-\begin{algorithm}[H]
+\begin{algorithm}[h]
 \caption{Алгоритм построения ГСО}\label{alg_gso}
 \begin{algorithmic}[1]
 \Function{GCS}{$P$}
@@ -356,6 +358,7 @@ P_2 = T_1^2 \ldots T_k^2
 \indent Пусть $P^{*} = $ ГСО$(P_{H1} \ldots P_{Hn})$, вычисленное на предыдущем шаге, $P^{*} \xrightarrow{S_i} P_{Hi}$. Рассмотрим $v_j$, входящее в $P^*$ для $i = 1 \ldots N$ $v_j \to P_{ij}$, пусть $P_{1j} \ldots P_{Nj}$ --- последовательность образцов. \textit{Уточняющим префиксом} длинной $d$ назовем префикс последовательности $P_{1j} \ldots P_{dj}$ такой, что $v_j \nrightarrow v$ $(e_j \nrightarrow e)$ и $d$ --- максимально. Уточняющий префикс будет \textit{определяющим}, если существуют $d_1$ и $d_2$, $0 \leq d_1, d_2 \leq d$ подстановки $v_j \to P_{d_1j}$ и $v_j \to P_{d_2j}$ ортогональны --- т.е. не существует такого образца $E$, что $P_1 \Rightarrow E$ и $P_2 \Rightarrow E$.\\
 \indent Выбираем $v_j$ с уточняющим префиксом максимальной длины $d$. Если префикс определяющий, то делим предложения на три группы: $v_j \to Q$, $v_j \to R$, $Q \perp R$ и $i > d$. Иначе, на две группы --- $i \leq d$ и $i > d$, после чего повторяем предыдущие шаги.
 
+\clearpage
 \newpage
 
 \part*{\large \centering ЗАКЛЮЧЕНИЕ}
