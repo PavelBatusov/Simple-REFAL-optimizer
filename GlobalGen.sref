@@ -1,0 +1,149 @@
+$EXTERN WriteLine, Map, Fetch, Compare, Add, Sub, Min, Max;
+
+$LABEL S, T, E, Atom, Brackets, Alt;
+
+/* (#Alt (e.pat 1 ... N-1) (e.pat N)) */
+ParseVar {
+	(#Alt t.1 t.2) = <ParseVar t.1> <ParseVar t.2>;
+	(#Alt t.1) = <ParseVar t.1>;
+	/* brackets */
+	((#Brackets e.body)) = ((#Brackets e.body));
+	/* step overs renamed vars */
+	((s.VarType t.name ())) = ((s.VarType t.name ()));
+	((s.VarType t.name t.patt)) = <ParseVar t.patt>;
+	/* bottom */
+	t.1 = t.1;
+}
+
+/* e.sent = T1 ... TN */
+GetAllVars {
+	e.sent = 
+		< Map
+			{
+				(#Atom e.body) = ;
+				(#Brackets e.body) = <GetAllVars e.body>;
+				(s.VarType t.name t.pat) = (<ParseVar t.pat>);
+			}
+			e.sent
+		>;
+}
+
+$LABEL K, MN;
+
+Minimize {
+	(#K s.1) e.classes (s.K s.M s.N) = 
+		<Minimize 
+			e.classes 
+			(<Min s.K s.1> s.M s.N)
+		>;
+	(#MN s.1 s.2) e.classes (s.K s.M s.N) =
+		<Minimize
+			e.classes
+			(s.K <Min s.M s.1> <Min s.N s.2>)
+		>;
+	t.answer = t.answer;
+}
+
+/* e.patt (s.K) */
+CalcClassK {
+	s.1 = s.1;
+	t.1 e.2 s.3 = <CalcClassK e.2 <Add s.3 1>>;
+}
+
+/* e.patt (s.M s.N) */
+CalcClassMN {
+	(#E t.name t.patts) s.1 s.2 = s.1 s.2;
+	(#E t.name1 t.patts1) e.smth (#E t.name2 t.patts2) s.1 s.2 = s.1 s.2;
+	(#E t.name t.patts) e.smth t.right s.1 s.2 = 
+		<CalcClassMN (#E t.name t.patts) e.smth s.1 <Add s.2 1>>;
+	t.left e.smth (#E t.name t.patts) s.1 s.2 = 
+		<CalcClassMN e.smth (#E t.name t.patts) <Add s.1 1> s.2>;
+	t.left e.smth t.right s.1 s.2 =
+		<CalcClassMN e.smth <Add s.1 1> <Add s.2 1>>;
+}
+
+/* (j, k - j) j <= s.right */
+GetClasses {
+	s.j s.k s.right = 
+		<Fetch
+			<Compare s.j s.right>
+			{
+				'>' = ;
+				s.other = (s.j <Sub s.k s.j>) <GetClasses <Add s.j 1> s.k s.right>; 
+			}
+		>;
+}
+
+CalcClasses-Aux {
+	e.classes =
+		< Map
+			{
+				(#K (s.1 0 0)) = (<GetClasses 0 s.1 s.1>);
+				(#MN (0 s.1 s.2)) = ((s.1 s.2));
+				(#K #MN (s.k s.m s.n)) =
+					<Fetch
+						<Compare s.k <Add s.m s.n>>
+						<Compare s.k s.m>
+						<Compare s.k s.n>
+						{
+							'>' e.tail = ((s.m s.n));
+							'=' e.tail = ((s.m s.n));
+							'<' '>' '>' = 
+								(<GetClasses 
+									<Min <Sub s.k s.n> s.m> 
+									s.k 
+									<Max <Sub s.k s.n> s.m>>
+								);
+							'<' '<' '>' =
+								(<GetClasses 
+									<Min <Sub s.k s.n> s.k> 
+									s.k 
+									<Max <Sub s.k s.n> s.k>>
+								);
+							'<' '>' '<' = (<GetClasses 0 s.k  s.m>);
+							'<' '<' '<' = (<GetClasses 0 s.k  s.k>);
+						}
+					>;
+				}
+				e.classes
+		>;
+}
+
+CalcClasses {
+	e.patterns =
+		< CalcClasses-Aux
+		< Map
+			{
+				(e.1 (#K s.k) e.2 (#MN s.m s.n) e.3) = 
+					(#K #MN <Minimize e.1 (#K s.k) e.2 (#MN s.m s.n) e.3 (100 100 100)>);
+				(e.1 (#MN s.m s.n) e.2 (#K s.k) e.3) = 
+					(#K #MN <Minimize e.1 (#MN s.m s.n) e.2 (#K s.k) e.3 (100 100 100)>);
+				(e.1 (#MN s.m s.n) e.2) = 
+					(#MN <Minimize e.1 (#MN s.m s.n) e.2 (0 100 100)>);
+				(e.1 (#K s.k) e.2) = 
+					(#K <Minimize e.1 (#K s.k) e.2 (100 0 0)>);
+			}
+			< Map
+				{
+					(e.patts) = 
+						(< Map 
+						{ 
+							(e.left (#E t.name t.p) e.right) = 
+								(#MN <CalcClassMN e.left (#E t.name t.p) e.right 0 0>);
+							(e.patt) = (#K <CalcClassK e.patt 0>);
+						}
+						e.patts
+						>);
+				}
+				e.patterns
+			>
+		>
+		>;
+}
+
+/* (e.FastGen) ( (e.sent1) (e.sent2) ... (e.sentN) ) */
+$ENTRY GlobalGen {
+	(e.FastGen) (e.sent) = 
+		<WriteLine <GetAllVars e.FastGen>>
+		<WriteLine <CalcClasses <GetAllVars e.FastGen>>>;
+}
