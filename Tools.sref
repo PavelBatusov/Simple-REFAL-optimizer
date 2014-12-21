@@ -1,4 +1,4 @@
-$EXTERN WriteLine, Exit, EraseBr;
+$EXTERN WriteLine, Exit, EraseBr, Compare, Fetch;
 
 $ENTRY Error {
 	e.Err = <WriteLine e.Err> <Exit 1>;
@@ -25,4 +25,28 @@ $ENTRY MakeIndexes {
 		<MakeIndexes e.tail (e.index'r')>;
 
 	(e.index) = ;
+}
+
+/* s.1 s.2 */
+$ENTRY Min {
+	s.1 s.2 =
+		<Fetch
+			<Compare s.1 s.2>
+			{
+				'<' = s.1;
+				s.Other = s.2;
+			}
+		>;
+}
+
+/* s.1 s.2 */
+$ENTRY Max {
+	s.1 s.2 =
+		<Fetch
+			<Compare s.1 s.2>
+			{
+				'>' = s.1;
+				s.Other = s.2;
+			}
+		>;
 }

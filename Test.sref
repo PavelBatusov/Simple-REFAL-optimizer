@@ -1,4 +1,5 @@
-$EXTERN LoadFile, WriteLine, Parser, Error, HardGen, FastGen, MakeIndexes, EraseBr;
+$EXTERN LoadFile, WriteLine, Parser, Error, HardGen, FastGen, MakeIndexes;
+$EXTERN EraseBr, GlobalGen;
 
 MakePatterns {
 	e.Pattern '=' e.Result ';' e.Tail = 
@@ -24,6 +25,7 @@ Test {
 			('FastGen:')
 			(<MakeIndexes <EraseBr <FastGen <HardGen <MakePatterns e.Sent>>>> ('i_')>)
 		>
+		<GlobalGen <FastGen <HardGen <MakePatterns e.Sent>>> (<HardGen <MakePatterns e.Sent>>)>
 		<WriteLine>;
 }
 

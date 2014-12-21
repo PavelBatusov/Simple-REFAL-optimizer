@@ -1,4 +1,4 @@
-$EXTERN WriteLine, Map, Fetch, Compare, Add, Sub, Min, Max;
+$EXTERN WriteLine, Map, Fetch, Compare, Add, Sub, Min, Max, EraseBr;
 
 $LABEL S, T, E, Atom, Brackets, Alt;
 
@@ -141,9 +141,38 @@ CalcClasses {
 		>;
 }
 
+/* ( e.pattern ) t.class */
+Superposition {
+	() (s.1 s.2) = (#E ('$') ());
+	( e.smth ) (0 0) = (#E ('$') (#Alt (e.smth)));
+	( t.left e.smth ) (s.1 0) = t.left <Superposition (e.smth) (<Sub s.1 1> 0)>;
+	( e.smth t.right ) (0 s.2) = <Superposition (e.smth) (0 <Sub s.2 1>)> t.right;
+	( t.left e.smth t.right ) (s.1 s.2) =
+		t.left <Superposition (e.smth) (<Sub s.1 1> <Sub s.2 1>)> t.right;
+}
+
+SplitArgs {
+	t.pattern e.1 '|' e.classes =
+		<Map { t.class = (<Superposition t.pattern t.class>); } e.classes>
+		<SplitArgs e.1 '|' e.classes>;
+	'|' e.classes = ;
+}
+
+/*
+( подстановки образцы )  .  .  .  ( классы образцов )   
+              п е р е м е н н ы е
+*/       
+CreateSuperposition {
+	(t.var e.tail1) (t.classes e.tail2) =
+		(<SplitArgs <EraseBr t.var> '|' <EraseBr t.classes>>) 
+		<CreateSuperposition (e.tail1) (e.tail2)>;
+	() () = ;
+}
+
 /* (e.FastGen) ( (e.sent1) (e.sent2) ... (e.sentN) ) */
 $ENTRY GlobalGen {
 	(e.FastGen) (e.sent) = 
 		<WriteLine <GetAllVars e.FastGen>>
-		<WriteLine <CalcClasses <GetAllVars e.FastGen>>>;
+		<WriteLine <CalcClasses <GetAllVars e.FastGen>>>
+		<WriteLine <CreateSuperposition (<GetAllVars e.FastGen>) (<CalcClasses <GetAllVars e.FastGen>>)>>;
 }
