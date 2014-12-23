@@ -324,39 +324,71 @@ P_2 = T_1^2 \ldots T_k^2
 
 \subsection[Оптимизация]{\large Оптимизация}
 \hspace{\parindent} На первом этапе оптимизации все образцы функции приводятся к жестким образцам. Для $i = 1 \ldots N$ $P_{Hi} = $ СЖО$(P_i)$, $P_{Hi} \xrightarrow{S_{Hi}} P_i$.\\
-\indent Следующий шаг заключается в вычислении быстрого обобщения $P^{*} = $ БО$(P_{H1} \ldots P_{Hn})$, $P^{*} \xrightarrow{S_i} P_{Hi}$, $S_i = \{v_j \to P_{ij}$ $|$ $j = 1\ldots k \}$ и генерации его кода. Для каждой $v_j$ необходимо построить $P_j^* = $ ГСО($P_{1j} \ldots P_{Nj}$) --- листинг \ref{alg_gso}.
- 
-\begin{algorithm}[h]
-\caption{Алгоритм построения ГСО}\label{alg_gso}
-\begin{algorithmic}[1]
-\Function{GCS}{$P$}
-	\If{$v_i$ --- s-переменная}
-		\State \Return $s$
-	\EndIf
-	\If{$v_i$ --- t-переменная}
-		\State \Return $t$
-	\EndIf
-	\If{$v_i$ --- e-переменная}
-		\State \Comment{Пусть $Q$ --- множество образцов из $P_{ij}$ класса $(M, N)$}
-		\State \Comment{$R$ --- класса $(K)$}
-		\State \Comment{$Q - L_1^{ij} \ldots L_{Mij}^{ij} e M_{Nij}^{ij} \ldots M_1^{ij}$}
-		\State \Comment{$R - T_1^{ij} \ldots T_{Kij}^{ij}$}		
-		\If{$M_{min} = 0$ и $N_{min} = 0$}
-			\State \Return $e$
-		\EndIf
-		\If{$K_{min} = 0$}
-			\State \Return $e$
-		\EndIf
-		\State $L_f = $ ГСО$(\{L_j^{ij}\}, \{T_f^{ij}\})$
-		\State $R_f = $ ГСО$(\{M_f^{ij}\}, \{T_{Kij-f+1}^{ij}\})$	
-		\State \Comment{Из $P_{m,n}^*$ выбираем наиболее сложный} 	
-	\EndIf
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
+\indent Следующий шаг заключается в вычислении быстрого обобщения $P^{*} = $ БО$(P_{H1} \ldots P_{Hn})$, $P^{*} \xrightarrow{S_i} P_{Hi}$, $S_i = \{v_j \to P_{ij}$ $|$ $j = 1\ldots k \}$ и генерации его кода. Для каждой $v_j$ необходимо построить $P_j^* = $ ГСО($P_{1j} \ldots P_{Nj}$). Рассмотрим процес вычисления глобального сложнейшего обобщения на следующем примере (\ref{eq:math:gso_calc_example}):
+\begin{equation}\label{eq:math:gso_calc_example}
+\begin{array}{l}
+\textrm{Первый образец: (A e.1) (B e.2)} \\
+\textrm{Второй образец: (B e.3)} \\
+\end{array}
+\end{equation} 
 
-\indent Пусть $P^{*} = $ ГСО$(P_{H1} \ldots P_{Hn})$, вычисленное на предыдущем шаге, $P^{*} \xrightarrow{S_i} P_{Hi}$. Рассмотрим $v_j$, входящее в $P^*$ для $i = 1 \ldots N$ $v_j \to P_{ij}$, пусть $P_{1j} \ldots P_{Nj}$ --- последовательность образцов. \textit{Уточняющим префиксом} длинной $d$ назовем префикс последовательности $P_{1j} \ldots P_{dj}$ такой, что $v_j \nrightarrow v$ $(e_j \nrightarrow e)$ и $d$ --- максимально. Уточняющий префикс будет \textit{определяющим}, если существуют $d_1$ и $d_2$, $0 \leq d_1, d_2 \leq d$ подстановки $v_j \to P_{d_1j}$ и $v_j \to P_{d_2j}$ ортогональны --- т.е. не существует такого образца $E$, что $P_1 \Rightarrow E$ и $P_2 \Rightarrow E$.\\
-\indent Выбираем $v_j$ с уточняющим префиксом максимальной длины $d$. Если префикс определяющий, то делим предложения на три группы: $v_j \to Q$, $v_j \to R$, $Q \perp R$ и $i > d$. Иначе, на две группы --- $i \leq d$ и $i > d$, после чего повторяем предыдущие шаги.
+\indent Вычисляем быстрое обобщение и считаем классы, в которых нужно искать ЛСО.
+\begin{equation*}
+\begin{array}{l}
+\textrm{Быстрое обобщение: e.X}\rightarrow \textrm{[(A e.1) (B e.2) | B (e.3)]} \\
+\textrm{Для образцов класса (1, 1) и (1) ЛСО будут принадлежать либо классу (1, 0), либо (0, 1)} \\
+\end{array}
+\end{equation*} 
+
+\indent Производим наложение на каждый из этих двух классов, после чего повторно вычисляем потермово ГСО и считаем сложность полученных образцов.\\
+\indent Класс (1, 0)
+\begin{equation*}
+\begin{array}{l}
+\textrm{Наложения образцов будут иметь вид (A e.1) e.4 и (B e.3) e.5} \\
+\textrm{Результат потермово вычисленного ГСО --- (s.6 e.7) e.8} \\
+\textrm{Сложность результата C((s.6 e.7) e.8) = 1 + 0 + 2 + 0 + 3 - 2 = 4} \\
+\end{array}
+\end{equation*} 
+
+\indent Класс (0, 1)
+\begin{equation*}
+\begin{array}{l}
+\textrm{Наложения образцов будут иметь вид e.9 (B e.2) и e.10 (B e.3)} \\
+\textrm{Результат потермово вычисленного ГСО --- e.11 (B e.12)} \\
+\textrm{Сложность результата C(e.11 (B e.12)) = 1 + 0 + 0 + 3 + 3 − 2 = 5} \\
+\end{array}
+\end{equation*} 
+
+\indent В итоге, из (s.6 e.7) e.8 и e.11 (B e.12) выбираем второй. ГСО((A e.1) (B e.2), (B e.3)) = e.11 (B e.12). По полученным БО и ГСО можно строить оптимизацию образцов функции.
+
+\newpage
+
+\section[Реализация алгоритма]{\large \centering Реализация алгоритма}
+\subsection[Внутренне представление компилируемой программы]{\large Внутренне представление компилируемой программы}
+\subsubsection[Лексический анализ]{\large Лексический анализ}
+\hspace{\parindent} Оптимизация очередной функции начинается с построения лексической свертки образцовых частей предложений. Каждая лексема является скобочным термом, снабженным тегом и атрибутом (в зависимости от типа лексемы (\ref{gram:lex})).
+\begin{equation}\label{gram:lex}
+\begin{array}{l}
+\textrm{e.Tokens ::= t.Token*} \\
+\textrm{t.Token ::= (s.Tag e.Attr)} \\
+\textrm{s.Tag ::= '(' | ')' | \#S | \#T | \#E | \#Atom} \\
+\end{array}
+\end{equation}
+
+\subsubsection[Синтаксический анализ]{\large Синтаксический анализ}
+\hspace{\parindent} Синтаксический анализ строит синтаксическое дерево (\ref{gram:syn}). Образец есть последовательность термов, терм --- атом, переменная или скобки. Скобки --- скобочный терм, внутри которого находится символ
+Brackets, и <<тело>> скобок, имеющего ту же структуру, что и для образца.
+\begin{equation}\label{gram:syn}
+\begin{array}{l}
+\textrm{e.Pattern ::= t.Term*} \\
+\textrm{t.Term ::= t.Atom | t.Variable | (\#Brackets e.Pattern)} \\
+\textrm{t.Atom ::= (\#Atom s.Attr)} \\
+\textrm{t.Variable ::= (s.VariableType e.Index)} \\
+\textrm{s.VariableType ::= \#S | \#E | \#T} \\
+\end{array}
+\end{equation}
+
+\indent 
 
 \clearpage
 \newpage
