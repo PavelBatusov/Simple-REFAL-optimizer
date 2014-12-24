@@ -1,0 +1,20 @@
+$EXTERN WriteLine;
+
+CreateHardSent {
+	/* предлажение имеет вид (P') */
+	( e.body ) ( e.tek_index ) = (<CreateHardSent e.body (e.tek_index)>);
+	/* s или t переменна */
+	's.'e.index ( e.tek_index ) = 's.Index'e.tek_index'i';
+	't.'e.index ( e.tek_index ) = 't.Index'e.tek_index'i';
+	s.index ( e.tek_index ) = s.index;
+	/* отщипнуть терм слева или справа */
+	t.left e.smth ( e.tek_index ) = <CreateHardSent t.left (e.tek_index'l')> <CreateHardSent e.smth (e.tek_index'r')>;
+	e.smth t.right ( e.tek_index ) = <CreateHardSent e.smth (e.tek_index'l')> <CreateHardSent t.right (e.tek_index'r')>;
+}
+
+$ENTRY HardGen {
+	(e.sent) e.tail = (<CreateHardSent e.sent ('_')>)
+				<WriteLine 'Hard sentence: '<CreateHardSent e.sent ('_')>> 
+				<HardGen e.tail>;
+	 = ;
+}
