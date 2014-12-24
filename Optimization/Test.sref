@@ -1,0 +1,81 @@
+$EXTERN LoadFile, WriteLine, Parser, Error, HardGen, FastGen, MakeIndexes;
+$EXTERN EraseBr, GlobalGen;
+
+MakePatterns {
+	e.Pattern '=' e.Result ';' e.Tail = 
+		(<Parser e.Pattern>) <MakePatterns e.Tail>;
+	= ;
+	e.smth = <Error 'Bad scentence: ' e.smth>;
+}
+
+$FORWARD PrintPattern;
+
+Test {
+	(e.Sent) =
+				<WriteLine 'Input: ' e.Sent>
+		<PrintPattern
+			('Patterns:') 
+			<MakePatterns e.Sent>
+		> 
+		<PrintPattern
+			('HardGen:')
+			<HardGen <MakePatterns e.Sent>>
+		>
+		<PrintPattern
+			('FastGen:')
+			(<MakeIndexes <EraseBr <FastGen <HardGen <MakePatterns e.Sent>>>> ('i_')>)
+		>
+		<GlobalGen <FastGen <HardGen <MakePatterns e.Sent>>> (<HardGen <MakePatterns e.Sent>>)>
+		<WriteLine>;
+}
+
+$LABEL Atom, E, T, S, Brackets, Alt;
+
+$EXTERN Map, Fetch;
+
+VarName { #E = 'e'; #T = 't'; #S = 's'; }
+
+PrintPattern-Aux {
+	e.Expr =
+		<Map
+			{
+				(#Atom s.Value) = '#' s.Value ' ';
+				(#Brackets e.InBrackets) = '(' <PrintPattern-Aux e.InBrackets> ') ';
+				
+				(s.Var ('$') (#Alt e.Substs)) =
+					'['
+					<Map
+						{ (e.Pattern) = <PrintPattern-Aux e.Pattern> '|'; }
+						e.Substs
+					>
+					'] ';
+					
+				(s.Var (e.Index) (#Alt e.Substs)) =
+					<VarName s.Var> '.' e.Index '->['
+					<Map
+						{ (e.Pattern) = <PrintPattern-Aux e.Pattern> '|'; }
+						e.Substs
+					>
+					'] ';
+				
+				(s.Var (e.Index) ()) =
+					<Fetch s.Var { #E = 'e'; #T = 't'; #S = 's'; }> '.' e.Index ' ';
+			}
+			e.Expr
+		>;
+}
+
+PrintPattern {
+	(e.Message) e.Patterns =
+		<WriteLine '\n' e.Message>
+		<Map
+			{
+				(e.Pattern) = <WriteLine <PrintPattern-Aux e.Pattern>>;
+			}
+			e.Patterns
+		>;
+}
+
+$ENTRY Go {
+	= <Map Test <LoadFile 'Test.txt'>>;
+}
