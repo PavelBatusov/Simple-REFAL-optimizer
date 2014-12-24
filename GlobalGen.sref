@@ -1,4 +1,4 @@
-$EXTERN WriteLine, Map, Fetch, Compare, Add, Sub, Min, Max, EraseBr;
+$EXTERN WriteLine, Map, Fetch, Compare, Add, Sub, Min, Max, EraseBr, FastGen;
 
 $LABEL S, T, E, Atom, Brackets, Alt;
 
@@ -151,16 +151,24 @@ Superposition {
 		t.left <Superposition (e.smth) (<Sub s.1 1> <Sub s.2 1>)> t.right;
 }
 
+IndexSuper {
+	s.index t.pattern t.class e.tail = 
+		s.index 
+		(<Superposition t.pattern t.class>) 
+		<IndexSuper <Add s.index 1> t.pattern e.tail>;
+	s.index t.pattern = ;
+}
+
 SplitArgs {
 	t.pattern e.1 '|' e.classes =
-		<Map { t.class = (<Superposition t.pattern t.class>); } e.classes>
+		<IndexSuper 0 t.pattern e.classes>
 		<SplitArgs e.1 '|' e.classes>;
 	'|' e.classes = ;
 }
 
 /*
 ( подстановки образцы )  .  .  .  ( классы образцов )   
-              п е р е м е н н ы е
+           п е р е м е н н ы е
 */       
 CreateSuperposition {
 	(t.var e.tail1) (t.classes e.tail2) =
@@ -169,10 +177,57 @@ CreateSuperposition {
 	() () = ;
 }
 
+GSOagain {
+	s.index t.term1 e.tail1 s.index t.term2 e.tail2 =
+		<GSOagain s.index <FastGen t.term1 t.term2> e.tail1 e.tail2>;
+	s.index t.term1 e.tail = 
+		t.term1 <GSOagain e.tail>;
+	 = ;
+}
+
+CalcComplexity-aux {
+	s.comp (#S e.body) e.tail = 
+		<CalcComplexity-aux <Add s.comp 2> e.tail>;
+	s.comp (#E e.body) e.tail = 
+		<CalcComplexity-aux <Sub s.comp 1> e.tail>;
+	s.comp (#T e.body) e.tail = 
+		<CalcComplexity-aux <Add s.comp 1> e.tail>;
+	s.comp (#Atom e.body) e.tail = 
+		<CalcComplexity-aux <Add s.comp 3> e.tail>;
+	s.comp (#Brackets e.body) e.tail = 
+		<CalcComplexity-aux <Add s.comp 3> e.body e.tail>;
+	s.comp = s.comp;
+}
+
+CalcComplexity {
+	(e.body) e.tail = 
+		<CalcComplexity-aux 1 e.body> (e.body)
+		<CalcComplexity e.tail>;
+	 = ;
+}
+
+GetMax {
+	s.score1 t.1 s.score2 t.2 e.tail =
+		<Fetch
+			<Compare s.score1 s.score2>
+			{
+				'>' = <GetMax s.score1 t.1 e.tail>;
+				s.another = <GetMax s.score2 t.2 e.tail>;
+			}
+		>;
+	s.score t.1 = t.1;
+}
+
 /* (e.FastGen) ( (e.sent1) (e.sent2) ... (e.sentN) ) */
 $ENTRY GlobalGen {
 	(e.FastGen) (e.sent) = 
 		<WriteLine <GetAllVars e.FastGen>>
 		<WriteLine <CalcClasses <GetAllVars e.FastGen>>>
-		<WriteLine <CreateSuperposition (<GetAllVars e.FastGen>) (<CalcClasses <GetAllVars e.FastGen>>)>>;
+		<WriteLine <CreateSuperposition (<GetAllVars e.FastGen>) (<CalcClasses <GetAllVars e.FastGen>>)>>
+		<WriteLine
+			<Map
+				{ (e.body) = <GetMax <CalcComplexity <GSOagain e.body>>>; }
+				<CreateSuperposition (<GetAllVars e.FastGen>) (<CalcClasses <GetAllVars e.FastGen>>)>
+			>
+		>;
 }
