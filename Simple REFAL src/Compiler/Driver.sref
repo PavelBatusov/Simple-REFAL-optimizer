@@ -356,25 +356,15 @@ CreateLambdaName {
 }
 
 $FORWARD PrepareAndGenSentence;
-$EXTERN GetFastGen, TkVariable;
+$EXTERN GetFastGen, GetGlobalGen, TkVariable;
 
-GenFunctionBody-Aux {
-  /*s.ScopeClass (e.MainName) (e.Name) e.Sentences
-  (((TkVariable 'e' e.Index)) (e.Result)) =
-    <GenFnStart s.ScopeClass e.Name>
-    <Map
-      <PrepareAndGenSentence e.MainName>
-      <GetFastGen e.Sentences>
-      e.Sentences
-      (((TkVariable 'e' e.Index)) (e.Result))
-    >
-    <GenFnEndSucsess>;*/
-  
+GenFunctionBody-Aux {  
   s.ScopeClass (e.MainName) (e.Name) e.Sentences =
     <GenFnStart s.ScopeClass e.Name>
     <Map
       (PrepareAndGenSentence e.MainName)
       <GetFastGen e.Sentences>
+      <GetGlobalGen e.Sentences>
       e.Sentences
     >
     <GenFnEnd>;
