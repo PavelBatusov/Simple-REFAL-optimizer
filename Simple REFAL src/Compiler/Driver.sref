@@ -272,7 +272,7 @@ ParseNameList-Tail {
 $EXTERN TkOpenBlock, TkCloseBlock;
 
 //FROM Generator
-$EXTERN GenFnStart, GenSentence, GenFnEnd, GenFnEnd-Success;
+$EXTERN GenFnStart, GenSentence, GenFnEnd, GenFnEndSucsess;
 
 //FROM Context
 $EXTERN Cntx-Create, Cntx-Destroy;
@@ -356,22 +356,26 @@ CreateLambdaName {
 }
 
 $FORWARD PrepareAndGenSentence;
+$EXTERN GetFastGen, TkVariable;
 
 GenFunctionBody-Aux {
-  s.ScopeClass (e.MainName) (e.Name) e.Sentences
+  /*s.ScopeClass (e.MainName) (e.Name) e.Sentences
   (((TkVariable 'e' e.Index)) (e.Result)) =
     <GenFnStart s.ScopeClass e.Name>
     <Map
       <PrepareAndGenSentence e.MainName>
+      <GetFastGen e.Sentences>
       e.Sentences
       (((TkVariable 'e' e.Index)) (e.Result))
     >
-    <GenFnEnd-Success>;
+    <GenFnEndSucsess>;*/
   
   s.ScopeClass (e.MainName) (e.Name) e.Sentences =
     <GenFnStart s.ScopeClass e.Name>
     <Map
-      (PrepareAndGenSentence e.MainName) e.Sentences
+      (PrepareAndGenSentence e.MainName)
+      <GetFastGen e.Sentences>
+      e.Sentences
     >
     <GenFnEnd>;
 }

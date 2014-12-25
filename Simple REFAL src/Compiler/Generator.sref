@@ -30,7 +30,7 @@ $ENTRY GenFnEnd {
   = ('  return refalrts::cRecognitionImpossible;') ('}') ();
 }
 
-$ENTRY GenFnEnd-Sucsess {
+$ENTRY GenFnEndSucsess {
   = ('  return refalrts::cSuccess;') ('}') ();
 }
 
