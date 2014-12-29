@@ -355,15 +355,43 @@ CreateLambdaName {
     'lambda_' e.Name '_' <StrFromInt s.Number>;
 }
 
+//Debug
+$EXTERN WriteLine;
+
 $FORWARD PrepareAndGenSentence, PrepareAndGenCommonPattern;
-$EXTERN GetCommonPattern, TkVariable;
+$EXTERN GetCommonPattern, TkVariable, UpdatePattern, GetVars;
+
+FinalCheck {
+  (e.pattern) t.1 e.tail =
+    t.1
+    <Map
+      { s.num = 
+          ('    refalrts::Iter bb_'s.num' = copy_bb_'s.num';') 
+          ('    refalrts::Iter be_'s.num' = copy_be_'s.num';') ;
+      }
+      <GetVars e.pattern>
+    >
+    e.tail;
+}
 
 GenFunctionBody-Aux {  
   s.ScopeClass (e.MainName) (e.Name) e.Sentences =
     <GenFnStart s.ScopeClass e.Name>
     <PrepareAndGenCommonPattern <GetCommonPattern e.Sentences>>
     <Map
-      (PrepareAndGenSentence e.MainName)
+      {
+        ((e.Pattern) (e.Result)) = 
+          <FinalCheck
+            (<GetCommonPattern e.Sentences>)
+            <PrepareAndGenSentence 
+              e.MainName 
+              (
+                (<UpdatePattern (<GetCommonPattern e.Sentences>) (e.Pattern)>) 
+                (e.Result)
+              )
+            >  
+          >;
+      }
       e.Sentences
     >
     <GenFnEnd>;
@@ -371,32 +399,40 @@ GenFunctionBody-Aux {
 
 //FROM Algorithm
 $EXTERN MakeAlgorithm, GenPattern;
-$EXTERN LeftPtr, RightPtr;
+$EXTERN LeftPtr, RightPtr, GenSentence-Aux, GenCommand;
 
 $FORWARD InsertMainName;
 
-//Debug
-$EXTERN WriteLine;
-
 PrepareAndGenSentence {
   e.MainName ((e.Pattern) (e.Result)) =
-    <GenSentence
-      <MakeAlgorithm
-        (e.Pattern) (<Map (InsertMainName e.MainName) e.Result>)
+    ('  do {')
+    <GenSentence-Aux
+      <MapReduce
+        GenCommand
+        ('    ' /* indent */)
+        //<WriteLine e.Pattern>
+        /*<WriteLine
+        <MakeAlgorithm
+          (e.Pattern) (<Map (InsertMainName e.MainName) e.Result>)
+        >
+        >*/
+        <MakeAlgorithm
+          (e.Pattern) (<Map (InsertMainName e.MainName) e.Result>)
+        >
       >
     >;
 }
 
 ReMarkPattern {
   t.1 e.body t.2 t.3 = 
-    ('//Common Pattern (FastGen & GlobalGen)')
+    ('  //Common Pattern (FastGen & GlobalGen)')
     <Map
       {
         (e.indent 'break;') = 
           (e.indent 'return refalrts::cRecognitionImpossible;');
         t.another = t.another;
       }
-      e.body
+      e.body t.3
     >
     ();
 }
@@ -408,6 +444,28 @@ CheckVarNames {
    = ;
 }
 
+$EXTERN CmdPrint, CmdEmpty, CmdClosedE, AlgLeft, CmdVar;
+
+FinishEndOfCommonPattern {
+  e.patterns =
+    <Map 
+      {
+        (CmdClosedE s.Direction s.num s.mode s.index) =
+          (CmdPrint 'refalrts::Iter copy_bb_'s.index' = bb_'s.num';')
+          (CmdPrint 'refalrts::Iter copy_be_'s.index' = be_'s.num';');
+        (CmdVar s.Direction s.num s.mode s.index) =
+        /*
+          (CmdPrint 'static refalrts::Iter 's.mode s.index'_1;')
+          (CmdPrint 'refalrts::use( 's.mode s.index'_1 );')*/
+          (CmdVar s.Direction s.num s.mode s.index)
+          (CmdPrint 'refalrts::Iter copy_bb_'s.index' = bb_'s.num';')
+          (CmdPrint 'refalrts::Iter copy_be_'s.index' = be_'s.num';');
+        t.another = t.another;
+      }
+      e.patterns
+    >;
+}
+
 PrepareAndGenCommonPattern {
   e.Pattern = 
     <ReMarkPattern
@@ -416,7 +474,7 @@ PrepareAndGenCommonPattern {
           (LeftPtr 0) <CheckVarNames e.Pattern> (RightPtr 0)
           (/* vars */) (/* commands */)
         >
-        { t.1 (e.2) = <GenSentence e.2>; }
+        { t.1 (e.2) = <WriteLine t.1 (e.2)><GenSentence <FinishEndOfCommonPattern e.2>>; }
       >
     >;    
 }

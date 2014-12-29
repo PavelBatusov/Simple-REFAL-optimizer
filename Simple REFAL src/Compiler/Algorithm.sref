@@ -8,7 +8,7 @@ $ENTRY MakeAlgorithm {
   (e.Pattern) (e.Result) =
     <GeneralizeResult
       <GenPattern
-        (LeftPtr 0) e.Pattern (RightPtr 0)
+        /*(LeftPtr 0)*/ e.Pattern /*(RightPtr 0)*/
         (/* vars */) (/* commands */)
       >
       <GenResult

@@ -588,3 +588,62 @@ $ENTRY GetCommonPattern {
       <ReversePattern 1 1 <EraseBr<GetFastGen e.Sentence>>>
     >;
 }
+
+$EXTERN LeftPtr, RightPtr;
+
+// <UpdatePattern
+//   (<GetCommonPattern e.Sentences>)
+//   (e.Pattern) 
+// >
+$ENTRY UpdatePattern {
+  //Brackets
+  ((TkOpenBracket s.num1) e.body1 (TkCloseBracket s.num1) e.tail1)
+  ((TkOpenBracket s.num2) e.body2 (TkCloseBracket s.num2) e.tail2)
+  =
+    <UpdatePattern (e.body1) (e.body2)> <UpdatePattern (e.tail1) (e.tail2)>;
+  (e.head1 (TkOpenBracket s.num1) e.body1 (TkCloseBracket s.num1))
+  (e.head2 (TkOpenBracket s.num2) e.body2 (TkCloseBracket s.num2))
+  =
+    <UpdatePattern (e.head1) (e.head2)> <UpdatePattern (e.body1) (e.body2)>;
+  //Characters
+  ((TkChar s.val) e.tail1) ((TkChar s.val) e.tail2) =
+    <UpdatePattern (e.tail1) (e.tail2)>;
+  (e.head1 (TkChar s.val)) (e.head2 (TkChar s.val)) =
+    <UpdatePattern (e.head1) (e.head2)>;
+  //S VAR
+  ((TkVariable 's' s.num) e.tail1) (t.s_term e.tail2) =
+    (LeftPtr s.num) t.s_term (RightPtr s.num) 
+    <UpdatePattern (e.tail1) (e.tail2)>;
+  (e.head1 (TkVariable 's' s.num)) (e.head2 t.s_term) =
+    <UpdatePattern (e.head1) (e.head2)>
+    (LeftPtr s.num) t.s_term (RightPtr s.num);
+  //T VAR
+  ((TkVariable 't' s.num) e.tail1) 
+  ((TkOpenBracket s.index) e.body (TkCloseBracket s.index) e.tail2) =
+    (LeftPtr s.num) 
+      (TkOpenBracket s.index) e.body (TkCloseBracket s.index) 
+    (RightPtr s.num) 
+    <UpdatePattern (e.tail1) (e.tail2)>;
+  (e.head1 (TkVariable 't' s.num)) 
+  (e.head2 (TkOpenBracket s.index) e.body (TkCloseBracket s.index)) =
+    <UpdatePattern (e.head1) (e.head2)>
+    (LeftPtr s.num) 
+      (TkOpenBracket s.index) e.body (TkCloseBracket s.index) 
+    (RightPtr s.num);
+  ((TkVariable 't' s.num) e.tail1) (t.s_term e.tail2) =
+    (LeftPtr s.num) t.s_term (RightPtr s.num) 
+    <UpdatePattern (e.tail1) (e.tail2)>;
+  (e.head1 (TkVariable 't' s.num)) (e.head2 t.s_term) =
+    <UpdatePattern (e.head1) (e.head2)>
+    (LeftPtr s.num) t.s_term (RightPtr s.num);
+  //E VAR
+  ((TkVariable 'e' s.num)) (e.body) = (LeftPtr s.num) e.body (RightPtr s.num);
+  //Nothing
+  () () = ;
+}
+
+$ENTRY GetVars {
+  e.head (TkVariable s.type s.num) e.tail =
+    s.num <GetVars e.tail>;
+  e.smth = ;
+}

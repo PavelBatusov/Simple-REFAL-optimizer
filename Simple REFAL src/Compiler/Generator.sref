@@ -139,13 +139,13 @@ $EXTERN CmdChar, CmdNumber, CmdName, CmdIdent,
   CmdArrOB, CmdArrCB, CmdArrOADT, CmdArrCADT,
   CmdArrOC, CmdArrCC, CmdArrSplice, CmdArrCopy;
 
-$FORWARD GenSentence-Aux, GenCommand, BracketsVar-B, BracketsVar-E;
+$FORWARD BracketsVar-B, BracketsVar-E;
 
 //FROM LibraryEx
 $EXTERN Map, MapReduce;
 
 //FROM Library
-$EXTERN StrFromInt, WriteLine;
+$EXTERN StrFromInt, WriteLine, GenSentence-Aux, GenCommand;
 
 $ENTRY GenSentence {
   e.Algorithm =
@@ -166,7 +166,7 @@ $ENTRY GenSentence {
 
 $FORWARD GenCloseBrackets;
 
-GenSentence-Aux {
+$ENTRY GenSentence-Aux {
   (e.Indent) e.Generated =
     e.Generated <GenCloseBrackets e.Indent> ();
 }
@@ -229,7 +229,7 @@ PrintName {
   e.Name = e.Name;
 }
 
-GenCommand {
+$ENTRY GenCommand {
   (e.Indent) (CmdComment e.Text) = (e.Indent) (e.Indent '//' e.Text);
   (e.Indent) (CmdPrint e.Text) = (e.Indent) (e.Indent e.Text);
 
