@@ -355,25 +355,28 @@ CreateLambdaName {
     'lambda_' e.Name '_' <StrFromInt s.Number>;
 }
 
-$FORWARD PrepareAndGenSentence;
-$EXTERN GetFastGen, GetGlobalGen, TkVariable;
+$FORWARD PrepareAndGenSentence, PrepareAndGenCommonPattern;
+$EXTERN GetCommonPattern, TkVariable;
 
 GenFunctionBody-Aux {  
   s.ScopeClass (e.MainName) (e.Name) e.Sentences =
     <GenFnStart s.ScopeClass e.Name>
+    <PrepareAndGenCommonPattern <GetCommonPattern e.Sentences>>
     <Map
       (PrepareAndGenSentence e.MainName)
-      <GetFastGen e.Sentences>
-      <GetGlobalGen e.Sentences>
       e.Sentences
     >
     <GenFnEnd>;
 }
 
 //FROM Algorithm
-$EXTERN MakeAlgorithm;
+$EXTERN MakeAlgorithm, GenPattern;
+$EXTERN LeftPtr, RightPtr;
 
 $FORWARD InsertMainName;
+
+//Debug
+$EXTERN WriteLine;
 
 PrepareAndGenSentence {
   e.MainName ((e.Pattern) (e.Result)) =
@@ -382,6 +385,40 @@ PrepareAndGenSentence {
         (e.Pattern) (<Map (InsertMainName e.MainName) e.Result>)
       >
     >;
+}
+
+ReMarkPattern {
+  t.1 e.body t.2 t.3 = 
+    ('//Common Pattern (FastGen & GlobalGen)')
+    <Map
+      {
+        (e.indent 'break;') = 
+          (e.indent 'return refalrts::cRecognitionImpossible;');
+        t.another = t.another;
+      }
+      e.body
+    >
+    ();
+}
+
+CheckVarNames {
+  (TkVariable s.mode s.name) e.tail = 
+    (TkVariable s.mode <StrFromInt s.name>) <CheckVarNames e.tail>;
+  t.other e.tail = t.other <CheckVarNames e.tail>;
+   = ;
+}
+
+PrepareAndGenCommonPattern {
+  e.Pattern = 
+    <ReMarkPattern
+      <Fetch
+        <GenPattern
+          (LeftPtr 0) <CheckVarNames e.Pattern> (RightPtr 0)
+          (/* vars */) (/* commands */)
+        >
+        { t.1 (e.2) = <GenSentence e.2>; }
+      >
+    >;    
 }
 
 //FROM Lexer

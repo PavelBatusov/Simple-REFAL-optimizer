@@ -1,6 +1,8 @@
-$FORWARD GeneralizeResult, GenPattern, GenResult;
+$FORWARD GeneralizeResult, GenResult;
 
-$FORWARD LeftPtr, RightPtr;
+$EXTERN GenPattern;
+
+$EENUM LeftPtr, RightPtr;
 
 $ENTRY MakeAlgorithm {
   (e.Pattern) (e.Result) =
@@ -31,8 +33,6 @@ $EXTERN
 
 //FROM LibraryEx
 $EXTERN Inc;
-
-$ENUM LeftPtr, RightPtr;
 
 // Направление распознавания
 $EENUM AlgLeft, AlgRight;
@@ -68,7 +68,7 @@ $EENUM
 
 $FORWARD TextFromPattern, SaveBrackets;
 
-GenPattern {
+$ENTRY GenPattern {
   // Распознавание литералов (символьных, целочисленных, имён)
   e.Pattern-B (LeftPtr s.Num) (TkChar s.Char) e.Pattern-E
   (e.Vars) (e.Commands) =

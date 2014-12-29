@@ -53,7 +53,7 @@ ReversePattern {
     >;
   s.BracketNum s.VarNum t.other e.tail = 
     t.other <ReversePattern s.BracketNum s.VarNum e.tail>;
-  s.BracketNum s.VarNum = ;
+  s.BracketNum s.VarNum = (s.BracketNum s.VarNum);
 }
 
 MakePatterns {
@@ -235,6 +235,7 @@ FastGen-M {
 
 $ENTRY GetFastGen {
   e.Sentence = 
+    /*
     <WriteLine 'FastGen:'>
     <WriteLine
       <ReversePattern 
@@ -248,19 +249,14 @@ $ENTRY GetFastGen {
           >
         >
       >
-    >;
-  /*
-    ((<ReversePattern 
-      1 1
-      <EraseBr
-        <FastGen
-          <Map 
-            { (e.sent) = (<CreateHardSent e.sent ('_')>); }
-            <MakePatterns e.Sentence>
-          >
-        >
+    >
+    */
+    <FastGen
+      <Map 
+        { (e.sent) = (<CreateHardSent e.sent ('_')>); }
+        <MakePatterns e.Sentence>
       >
-    >)());*/
+    >;
 }
 
 $EXTERN Compare, Sub;
@@ -530,7 +526,8 @@ GlobalGen {
 }
 
 $ENTRY GetGlobalGen {
-  e.Sentence = 
+  e.Sentence = <GlobalGen <GetFastGen e.Sentence>>;
+    /*
     <Map
       //по всем переменным
       { (e.var_i) = <WriteLine <ReversePattern 1 1 e.var_i>>; }
@@ -544,4 +541,50 @@ $ENTRY GetGlobalGen {
       >
     >
     <WriteLine>;
+    */
+}
+
+GetCommonPattern-Aux {
+  ((t.pattern e.smth1) e.smth2) (TkVariable 's' s.num) e.tail (s.BracketNum s.VarNum) =
+    <Fetch
+      <ReversePattern s.BracketNum s.VarNum t.pattern> 
+      {
+        e.body (s.BN s.VN) =
+          e.body
+          <GetCommonPattern-Aux (e.smth2) e.tail (s.BN s.VN)>;
+      }
+    >;
+  ((t.pattern e.smth1) e.smth2) 
+  (TkVariable 't' s.num) e.tail 
+  (s.BracketNum s.VarNum) =
+    <Fetch
+      <ReversePattern s.BracketNum s.VarNum t.pattern> 
+      {
+        e.body (s.BN s.VN) =
+          e.body
+          <GetCommonPattern-Aux (e.smth2) e.tail (s.BN s.VN)>;
+      }
+    >;
+  ((e.pattern) e.smth) 
+  (TkVariable 'e' s.num) e.tail
+  (s.BracketNum s.VarNum) =
+    <Fetch
+      <ReversePattern s.BracketNum s.VarNum e.pattern> 
+      {
+        e.body (s.BN s.VN) =
+          e.body
+          <GetCommonPattern-Aux (e.smth) e.tail (s.BN s.VN)>;
+      }
+    >;
+  t.patterns t.another e.tail (s.BracketNum s.VarNum) = 
+    t.another <GetCommonPattern-Aux t.patterns e.tail (s.BracketNum s.VarNum)>;
+  () (s.BracketNum s.VarNum) = ; 
+}
+
+$ENTRY GetCommonPattern {
+  e.Sentence =
+    <GetCommonPattern-Aux
+      (<GetGlobalGen e.Sentence>)
+      <ReversePattern 1 1 <EraseBr<GetFastGen e.Sentence>>>
+    >;
 }
